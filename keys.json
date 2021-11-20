@@ -1,46 +1,50 @@
 [
-{
+  {
     "key": 0,
     "page": 1,
     "plugin": "post",
     "args": [],
     "icon_default": "web.png",
     "icon_pressed": "web_pressed.png",
-    "label": "do post",
+    "label": "do post 2",
     "font": "Roboto-Regular.ttf",
     "name": "post"
-},
-{
+  },
+  {
     "key": 1,
     "page": 1,
-    "plugin": "get",
-    "args": [],
+    "plugin": "builtin.web.get",
+    "args": [
+      "https://api.weather.gov/zones/county/KSC201"
+    ],
     "icon_default": "webget.png",
     "icon_pressed": "webget_pressed.png",
-    "label": "do get",
+    "label": "Washington",
     "font": "Roboto-Regular.ttf",
     "name": "get"
-},
-{
+  },
+  {
     "key": 2,
     "page": 1,
-    "plugin": "sound",
-    "args": [],
+    "plugin": "builtin.playsound",
+    "args": [
+      "/home/gabisonfire/Documents/streamdeck/Assets/horn.mp3"
+    ],
     "icon_default": "sound.png",
     "icon_pressed": "sound_pressed.png",
     "label": "horn",
     "font": "Roboto-Regular.ttf",
     "name": "sound"
-},
-{
+  },
+  {
     "key": 3,
     "page": 1,
-    "plugin": "exit",
+    "plugin": "builtin.exit",
     "args": [],
     "icon_default": "exit.png",
     "icon_pressed": "exit.png",
     "label": "exit",
     "font": "Roboto-Regular.ttf",
     "name": "exit"
-}
+  }
 ]

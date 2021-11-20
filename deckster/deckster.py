@@ -2,7 +2,7 @@ import os
 import threading
 import importlib
 
-from common.configs import read_key_config, read_config, defined_keys
+from common.configs import read_key_config, read_config, defined_keys, write_key_config
 from PIL import Image, ImageDraw, ImageFont
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.ImageHelpers import PILHelper
@@ -19,6 +19,13 @@ def render_key_image(deck, icon_filename, font_filename, label_text):
 
 def update_key_image(deck, key, pressed):
     key_style = get_key_style(key)
+    icon = key_style["icon_pressed"] if pressed else key_style["icon_default"]
+    image = render_key_image(deck, icon, key_style["font"], key_style["label"])
+    with deck:
+        deck.set_key_image(key, image)
+
+def update_key_image_style(deck, key, pressed, style):
+    key_style = style
     icon = key_style["icon_pressed"] if pressed else key_style["icon_default"]
     image = render_key_image(deck, icon, key_style["font"], key_style["label"])
     with deck:
@@ -41,10 +48,10 @@ def key_change_callback(deck, key, pressed):
     if pressed:
         key_style = get_key_style(key)
 
-        plugin = importlib.import_module(f"plugins.{key_style['plugin']}.{key_style['plugin']}", None)
+        plugin = importlib.import_module(f"plugins.{key_style['plugin']}", None)
         args = key_style["args"]
-        args.insert(0, deck)
-        plugin.main(args)
+        state = [deck, key, key_style, pressed]
+        plugin.main(state, args)
          
 
 def main():
@@ -70,4 +77,5 @@ def main():
             if t.is_alive():
                 t.join()
 
-main()
+if __name__ == "__main__":    
+    main()
