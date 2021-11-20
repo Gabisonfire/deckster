@@ -1,0 +1,46 @@
+[
+{
+    "key": 0,
+    "page": 1,
+    "plugin": "post",
+    "args": [],
+    "icon_default": "web.png",
+    "icon_pressed": "web_pressed.png",
+    "label": "do post",
+    "font": "Roboto-Regular.ttf",
+    "name": "post"
+},
+{
+    "key": 1,
+    "page": 1,
+    "plugin": "get",
+    "args": [],
+    "icon_default": "webget.png",
+    "icon_pressed": "webget_pressed.png",
+    "label": "do get",
+    "font": "Roboto-Regular.ttf",
+    "name": "get"
+},
+{
+    "key": 2,
+    "page": 1,
+    "plugin": "sound",
+    "args": [],
+    "icon_default": "sound.png",
+    "icon_pressed": "sound_pressed.png",
+    "label": "horn",
+    "font": "Roboto-Regular.ttf",
+    "name": "sound"
+},
+{
+    "key": 3,
+    "page": 1,
+    "plugin": "exit",
+    "args": [],
+    "icon_default": "exit.png",
+    "icon_pressed": "exit.png",
+    "label": "exit",
+    "font": "Roboto-Regular.ttf",
+    "name": "exit"
+}
+]
