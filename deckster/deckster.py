@@ -18,20 +18,20 @@ def render_key_image(deck, icon_filename, font_filename, label_text):
     return PILHelper.to_native_format(deck, image)
 
 def update_key_image(deck, key, pressed):
-    key_style = get_key_style(key)
-    icon = key_style["icon_pressed"] if pressed else key_style["icon_default"]
-    image = render_key_image(deck, icon, key_style["font"], key_style["label"])
+    key_config = get_key_config(key)
+    icon = key_config["icon_pressed"] if pressed else key_config["icon_default"]
+    image = render_key_image(deck, icon, key_config["font"], key_config["label"])
     with deck:
         deck.set_key_image(key, image)
 
 def update_key_image_style(deck, key, pressed, style):
-    key_style = style
-    icon = key_style["icon_pressed"] if pressed else key_style["icon_default"]
-    image = render_key_image(deck, icon, key_style["font"], key_style["label"])
+    key_config = style
+    icon = key_config["icon_pressed"] if pressed else key_config["icon_default"]
+    image = render_key_image(deck, icon, key_config["font"], key_config["label"])
     with deck:
         deck.set_key_image(key, image)
 
-def get_key_style(key):
+def get_key_config(key):
     return {
         "name": read_key_config(key, "name"),
         "icon_default": read_key_config(key, "icon_default"),
@@ -46,11 +46,16 @@ def key_change_callback(deck, key, pressed):
     print("Deck {} Key {} = {}".format(deck.id(), key, pressed), flush=True)
     update_key_image(deck, key, pressed)
     if pressed:
-        key_style = get_key_style(key)
+        key_config = get_key_config(key)
 
-        plugin = importlib.import_module(f"plugins.{key_style['plugin']}", None)
-        args = key_style["args"]
-        state = [deck, key, key_style, pressed]
+        plugin = importlib.import_module(f"plugins.{key_config['plugin']}", None)
+        args = key_config["args"]
+        state = {
+            "deck": deck, 
+            "key": key, 
+            "key_config": key_config,
+            "pressed": pressed
+        }
         plugin.main(state, args)
          
 

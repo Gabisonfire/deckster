@@ -2,21 +2,31 @@
   {
     "key": 0,
     "page": 1,
-    "plugin": "post",
-    "args": [],
+    "plugin": "builtin.web.post",
+    "args": {
+      "url": "http://homea.luna.net/api/services/light/toggle",
+      "headers": {
+        "Content-type": "application/json",
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmNGViMWQwMWZkOTM0MDVkOTI3MGE5Y2EwODg4ZmE4NSIsImlhdCI6MTYzNzcxNzUyNSwiZXhwIjoxOTUzMDc3NTI1fQ.irk1coPGoiKEo49gZMAq67-diiqFJRcra7gweixR2oU"
+        },
+      "json_data": {
+        "entity_id": "light.elgato_light_strip"
+      }
+    },
     "icon_default": "web.png",
     "icon_pressed": "web_pressed.png",
     "label": "do post 2",
     "font": "Roboto-Regular.ttf",
-    "name": "post"
+    "name": "post",
+    "button_type": "push"
   },
   {
     "key": 1,
     "page": 1,
     "plugin": "builtin.web.get",
-    "args": [
-      "https://api.weather.gov/zones/county/KSC201"
-    ],
+    "args": {
+      "url": "https://api.weather.gov/zones/county/KSC201"
+    },
     "icon_default": "webget.png",
     "icon_pressed": "webget_pressed.png",
     "label": "Washington",
@@ -27,9 +37,9 @@
     "key": 2,
     "page": 1,
     "plugin": "builtin.playsound",
-    "args": [
-      "/home/gabisonfire/Documents/streamdeck/Assets/horn.mp3"
-    ],
+    "args": {
+      "sound": "/home/gabisonfire/Documents/streamdeck/Assets/horn.mp3"
+    },
     "icon_default": "sound.png",
     "icon_pressed": "sound_pressed.png",
     "label": "horn",
@@ -40,7 +50,7 @@
     "key": 3,
     "page": 1,
     "plugin": "builtin.exit",
-    "args": [],
+    "args": {},
     "icon_default": "exit.png",
     "icon_pressed": "exit.png",
     "label": "exit",

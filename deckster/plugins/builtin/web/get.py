@@ -3,8 +3,8 @@ import json
 from common.configs import write_key_config
 
 def main(state, args):
-    key = state[1]
-    url = args[0]
+    key = state["key"]
+    url = args["url"]
     json_data = None
     headers = None
     if len(args) > 1 and args[1] is not None:

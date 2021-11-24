@@ -1,5 +1,5 @@
 def main(state, args):
-    deck = state[0]
+    deck = state["deck"]
     print("Bye")
     with deck:
         deck.reset()
