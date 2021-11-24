@@ -19,14 +19,20 @@ def render_key_image(deck, icon_filename, font_filename, label_text):
 
 def update_key_image(deck, key, pressed):
     key_config = get_key_config(key)
-    icon = key_config["icon_pressed"] if pressed else key_config["icon_default"]
-    image = render_key_image(deck, icon, key_config["font"], key_config["label"])
-    with deck:
-        deck.set_key_image(key, image)
-
-def update_key_image_style(deck, key, pressed, style):
-    key_config = style
-    icon = key_config["icon_pressed"] if pressed else key_config["icon_default"]
+    # If button is type toggle and is pressed, show pressed or default based on state, invert state
+    if key_config["button_type"] == "toggle" and pressed:
+        if not key_config["toggle_state"]:
+            icon = key_config["icon_pressed"]
+        else:
+          icon = key_config["icon_default"]  
+        write_key_config(key, "toggle_state", not key_config["toggle_state"])
+    
+    # If button is toggle, not pressed and in "on" state, keep pressed
+    elif key_config["button_type"] == "toggle" and not pressed and key_config["toggle_state"]:
+        icon = key_config["icon_pressed"]
+    # If push button
+    else:
+        icon = key_config["icon_pressed"] if pressed else key_config["icon_default"]
     image = render_key_image(deck, icon, key_config["font"], key_config["label"])
     with deck:
         deck.set_key_image(key, image)
@@ -39,7 +45,9 @@ def get_key_config(key):
         "font": read_key_config(key, "font"),
         "label": read_key_config(key, "label"),
         "plugin": read_key_config(key, "plugin"),
-        "args": read_key_config(key, "args")
+        "args": read_key_config(key, "args"),
+        "button_type": read_key_config(key, "button_type"),
+        "toggle_state": read_key_config(key, "toggle_state")
     }
 
 def key_change_callback(deck, key, pressed):
@@ -47,7 +55,6 @@ def key_change_callback(deck, key, pressed):
     update_key_image(deck, key, pressed)
     if pressed:
         key_config = get_key_config(key)
-
         plugin = importlib.import_module(f"plugins.{key_config['plugin']}", None)
         args = key_config["args"]
         state = {

@@ -8,7 +8,7 @@
       "headers": {
         "Content-type": "application/json",
         "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmNGViMWQwMWZkOTM0MDVkOTI3MGE5Y2EwODg4ZmE4NSIsImlhdCI6MTYzNzcxNzUyNSwiZXhwIjoxOTUzMDc3NTI1fQ.irk1coPGoiKEo49gZMAq67-diiqFJRcra7gweixR2oU"
-        },
+      },
       "json_data": {
         "entity_id": "light.elgato_light_strip"
       }
@@ -18,7 +18,8 @@
     "label": "do post 2",
     "font": "Roboto-Regular.ttf",
     "name": "post",
-    "button_type": "push"
+    "button_type": "toggle",
+    "toggle_state": false
   },
   {
     "key": 1,
@@ -31,7 +32,9 @@
     "icon_pressed": "webget_pressed.png",
     "label": "Washington",
     "font": "Roboto-Regular.ttf",
-    "name": "get"
+    "name": "get",
+    "button_type": "push",
+    "toggle_state": 0
   },
   {
     "key": 2,
@@ -44,7 +47,9 @@
     "icon_pressed": "sound_pressed.png",
     "label": "horn",
     "font": "Roboto-Regular.ttf",
-    "name": "sound"
+    "name": "sound",
+    "button_type": "push",
+    "toggle_state": 0
   },
   {
     "key": 3,
@@ -55,6 +60,8 @@
     "icon_pressed": "exit.png",
     "label": "exit",
     "font": "Roboto-Regular.ttf",
-    "name": "exit"
+    "name": "exit",
+    "button_type": "push",
+    "toggle_state": 0
   }
 ]

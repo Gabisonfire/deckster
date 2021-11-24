@@ -1,5 +1,25 @@
+## To do
+- pages
+- error handling
+- doc -> general, plugin dev
+- pip package
+- github action
+
+### Plugins
+
+
+
+
+
+
+
+
+
+## Done
 button_type:
   - push
   - toggle
 
-- pages
+- plugin: web get/post
+- plugin: exit
+- plugin: playsound
