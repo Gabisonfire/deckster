@@ -1,17 +1,36 @@
 import json
 import os
 from pathlib import Path
+from common.keys import Key
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 dir_path = Path(dir_path).parent.parent
 
-def read_key_config(key, attr):
+def read_keys():
+    templist = []
     for x in json.load(open(os.path.join(dir_path, "keys.json"))):
-        if x["key"] == key:
-            for y in x.keys():
-                if y == attr:
-                  return x[y]
-    raise ValueError(f'Not key/value found for {key}')
+        templist.append(
+            Key(
+                key = x["key"],
+                name = x["name"],
+                icon_default = x["icon_default"],
+                icon_pressed = x["icon_pressed"],
+                font = x["font"],
+                label = x["label"],
+                plugin = x["plugin"],
+                args = x["args"],
+                button_type = x["button_type"],
+                page = x["page"]
+            )
+        )
+    return templist
+
+# def write_keys()
+
+def find_key(key, page, key_list):
+    for x in key_list:
+        if x.key == key and x.page == page:
+            return x
 
 def read_config(cfg):
     cfg_file = json.load(open(os.path.join(dir_path, "config.json")))

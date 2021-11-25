@@ -1,4 +1,5 @@
 {
     "icons_dir": "./icons",
-    "plugins_dir": "~/Documents/deckster-plugins"
+    "plugins_dir": "~/Documents/deckster-plugins",
+    "current_page": 1
 }

@@ -37,8 +37,8 @@
     "toggle_state": 0
   },
   {
-    "key": 2,
-    "page": 1,
+    "key": 0,
+    "page": 2,
     "plugin": "builtins.play",
     "args": {
       "sound": "/home/gabisonfire/Documents/streamdeck/Assets/horn.mp3"
@@ -52,7 +52,7 @@
     "toggle_state": 0
   },
   {
-    "key": 3,
+    "key": 1,
     "page": 1,
     "plugin": "builtins.exit",
     "args": {},

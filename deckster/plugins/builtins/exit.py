@@ -1,4 +1,4 @@
-def main(state, args):
+def main(state):
     deck = state["deck"]
     print("Bye")
     with deck:

@@ -3,7 +3,8 @@ import threading
 import importlib
 import importlib.util
 
-from common.configs import read_key_config, read_config, defined_keys, write_key_config
+from common.configs import read_keys, read_config, defined_keys, write_key_config, find_key
+from common.configs import Key
 from PIL import Image, ImageDraw, ImageFont
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.ImageHelpers import PILHelper
@@ -11,6 +12,7 @@ from StreamDeck.ImageHelpers import PILHelper
 ICONS_DIR = read_config("icons_dir")
 PLUGINS_DIR = read_config("plugins_dir")
 PLUGINS_DIR = os.path.expanduser(PLUGINS_DIR)
+PAGE = read_config("current_page")
 
 def render_key_image(deck, icon_filename, font_filename, label_text):
     icon = Image.open(os.path.join(ICONS_DIR, icon_filename))
@@ -21,64 +23,47 @@ def render_key_image(deck, icon_filename, font_filename, label_text):
     return PILHelper.to_native_format(deck, image)
 
 def update_key_image(deck, key, pressed):
-    key_config = get_key_config(key)
     # If button is type toggle and is pressed, show pressed or default based on state, invert state
-    if key_config["button_type"] == "toggle" and pressed:
-        if not key_config["toggle_state"]:
-            icon = key_config["icon_pressed"]
+    if key.button_type == "toggle" and pressed:
+        if not key.toggle_state:
+            icon = key.icon_pressed
         else:
-          icon = key_config["icon_default"]  
-        write_key_config(key, "toggle_state", not key_config["toggle_state"])
+            icon = key.icon_default
+        write_key_config(key, "toggle_state", not key.toggle_state)
     
     # If button is toggle, not pressed and in "on" state, keep pressed
-    elif key_config["button_type"] == "toggle" and not pressed and key_config["toggle_state"]:
-        icon = key_config["icon_pressed"]
+    elif key.button_type == "toggle" and not pressed and key.toggle_state:
+        icon = key.icon_pressed
     # If push button
     else:
-        icon = key_config["icon_pressed"] if pressed else key_config["icon_default"]
-    image = render_key_image(deck, icon, key_config["font"], key_config["label"])
+        icon = key.icon_pressed if pressed else key.icon_default
+    image = render_key_image(deck, icon, key.font, key.label)
     with deck:
-        deck.set_key_image(key, image)
+        deck.set_key_image(key.key, image)
 
-def get_key_config(key):
-    return {
-        "name": read_key_config(key, "name"),
-        "icon_default": read_key_config(key, "icon_default"),
-        "icon_pressed": read_key_config(key, "icon_pressed"),
-        "font": read_key_config(key, "font"),
-        "label": read_key_config(key, "label"),
-        "plugin": read_key_config(key, "plugin"),
-        "args": read_key_config(key, "args"),
-        "button_type": read_key_config(key, "button_type"),
-        "toggle_state": read_key_config(key, "toggle_state")
-    }
-
-def key_change_callback(deck, key, pressed):
-    print("Deck {} Key {} = {}".format(deck.id(), key, pressed), flush=True)
+def key_change_callback(deck, key_num, pressed):
+    print("Deck {} Key {} = {}".format(deck.id(), key_num, pressed), flush=True)
+    key = find_key(key_num, PAGE, read_keys())
+    
     update_key_image(deck, key, pressed)
     if pressed:
-        key_config = get_key_config(key)
-        if key_config['plugin'].startswith("builtins."):
-            plugin = importlib.import_module("plugins." + key_config['plugin'], None)
+        pass
+        if key.plugin.startswith("builtins."):
+            plugin = importlib.import_module("plugins." + key.plugin, None)
         else:           
-           spec = importlib.util.spec_from_file_location(key_config['plugin'].split(".")[-1], os.path.join(PLUGINS_DIR, key_config['plugin'].replace(".", "/") + ".py"))
+           spec = importlib.util.spec_from_file_location(key.plugin.split(".")[-1], os.path.join(PLUGINS_DIR, key.plugin.replace(".", "/") + ".py"))
            plugin = importlib.util.module_from_spec(spec)
-           spec.loader.exec_module(plugin)    
-        args = key_config["args"]
+           spec.loader.exec_module(plugin)
         state = {
             "deck": deck, 
-            "key": key, 
-            "key_config": key_config,
+            "key": key.to_json(),
             "pressed": pressed
         }
-        plugin.main(state, args)
+        plugin.main(state)
          
 
 def main():
     streamdecks = DeviceManager().enumerate()
-
-    print("Found {} Stream Deck(s).\n".format(len(streamdecks)))
-
     for index, deck in enumerate(streamdecks):
         deck.open()
         deck.reset()
@@ -86,8 +71,8 @@ def main():
         print("Opened '{}' device (serial number: '{}')".format(deck.deck_type(), deck.get_serial_number()))
         deck.set_brightness(100)
 
-        for key in range(defined_keys()):
-            update_key_image(deck, key, False)
+        for k in read_keys():
+            update_key_image(deck, k, False)
 
         deck.set_key_callback(key_change_callback)
 
