@@ -9,4 +9,4 @@ def main(state):
     headers = None
 
     res = requests.get(url, params = json_data, headers = headers)
-    write_key_config(args["key"], "label", res.json()["properties"]["name"])
+    write_key_config(state["key"], "label", res.json()["properties"]["name"])

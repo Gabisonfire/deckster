@@ -53,7 +53,7 @@
   },
   {
     "key": 1,
-    "page": 1,
+    "page": 2,
     "plugin": "builtins.exit",
     "args": {},
     "icon_default": "exit.png",

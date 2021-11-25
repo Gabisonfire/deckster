@@ -37,14 +37,14 @@ def update_key_image(deck, key, pressed):
     # If push button
     else:
         icon = key.icon_pressed if pressed else key.icon_default
-    image = render_key_image(deck, icon, key.font, key.label)
-    with deck:
-        deck.set_key_image(key.key, image)
+    if key.page == PAGE:
+        image = render_key_image(deck, icon, key.font, key.label)
+        with deck:
+            deck.set_key_image(key.key, image)
 
 def key_change_callback(deck, key_num, pressed):
     print("Deck {} Key {} = {}".format(deck.id(), key_num, pressed), flush=True)
     key = find_key(key_num, PAGE, read_keys())
-    
     update_key_image(deck, key, pressed)
     if pressed:
         pass
