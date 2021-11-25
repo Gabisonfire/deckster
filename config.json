@@ -1,3 +1,4 @@
 {
-    "icons_dir": "./icons"
+    "icons_dir": "./icons",
+    "plugins_dir": "~/Documents/deckster-plugins"
 }

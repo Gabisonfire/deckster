@@ -2,7 +2,7 @@
   {
     "key": 0,
     "page": 1,
-    "plugin": "builtin.web.post",
+    "plugin": "builtins.web.post",
     "args": {
       "url": "http://homea.luna.net/api/services/light/toggle",
       "headers": {
@@ -24,7 +24,7 @@
   {
     "key": 1,
     "page": 1,
-    "plugin": "builtin.web.get",
+    "plugin": "builtins.web.get",
     "args": {
       "url": "https://api.weather.gov/zones/county/KSC201"
     },
@@ -39,7 +39,7 @@
   {
     "key": 2,
     "page": 1,
-    "plugin": "builtin.playsound",
+    "plugin": "builtins.play",
     "args": {
       "sound": "/home/gabisonfire/Documents/streamdeck/Assets/horn.mp3"
     },
@@ -54,7 +54,7 @@
   {
     "key": 3,
     "page": 1,
-    "plugin": "builtin.exit",
+    "plugin": "builtins.exit",
     "args": {},
     "icon_default": "exit.png",
     "icon_pressed": "exit.png",

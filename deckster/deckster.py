@@ -1,6 +1,7 @@
 import os
 import threading
 import importlib
+import importlib.util
 
 from common.configs import read_key_config, read_config, defined_keys, write_key_config
 from PIL import Image, ImageDraw, ImageFont
@@ -8,6 +9,8 @@ from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.ImageHelpers import PILHelper
 
 ICONS_DIR = read_config("icons_dir")
+PLUGINS_DIR = read_config("plugins_dir")
+PLUGINS_DIR = os.path.expanduser(PLUGINS_DIR)
 
 def render_key_image(deck, icon_filename, font_filename, label_text):
     icon = Image.open(os.path.join(ICONS_DIR, icon_filename))
@@ -55,7 +58,12 @@ def key_change_callback(deck, key, pressed):
     update_key_image(deck, key, pressed)
     if pressed:
         key_config = get_key_config(key)
-        plugin = importlib.import_module(f"plugins.{key_config['plugin']}", None)
+        if key_config['plugin'].startswith("builtins."):
+            plugin = importlib.import_module("plugins." + key_config['plugin'], None)
+        else:           
+           spec = importlib.util.spec_from_file_location(key_config['plugin'].split(".")[-1], os.path.join(PLUGINS_DIR, key_config['plugin'].replace(".", "/") + ".py"))
+           plugin = importlib.util.module_from_spec(spec)
+           spec.loader.exec_module(plugin)    
         args = key_config["args"]
         state = {
             "deck": deck, 
