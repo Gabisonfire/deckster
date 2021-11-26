@@ -1,5 +1,5 @@
 ## To do
-- pages
+
 - error handling
 - doc -> general, plugin dev
 - pip package
@@ -7,9 +7,15 @@
 - on timer
 - hide label
 - full label
+  - size
+  - color
 - debug logging
-- fix skipping keys (blanks?)
+
 - set brightness in config
+
+button_type:
+  - timer_on
+  - timer_toggle
 
 ### Plugins
 - shell command
@@ -27,6 +33,8 @@ button_type:
   - push
   - toggle
 
+- pages
 - plugin: web get/post
 - plugin: exit
 - plugin: playsound
+- fix skipping keys (blanks?)

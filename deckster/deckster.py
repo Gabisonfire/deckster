@@ -3,8 +3,7 @@ import threading
 import importlib
 import importlib.util
 
-from common.configs import read_keys, read_config, defined_keys, write_key_config, find_key
-from common.configs import Key
+from common.configs import max_page, read_keys, read_config, write_key_config, find_key, write_config
 from PIL import Image, ImageDraw, ImageFont
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.ImageHelpers import PILHelper
@@ -44,10 +43,13 @@ def update_key_image(deck, key, pressed):
 
 def key_change_callback(deck, key_num, pressed):
     print("Deck {} Key {} = {}".format(deck.id(), key_num, pressed), flush=True)
-    key = find_key(key_num, PAGE, read_keys())
+    current_page = read_config("current_page")
+    key = find_key(key_num, current_page, read_keys())
+    # If the key is blank, don't do anything
+    if key == None:
+        return
     update_key_image(deck, key, pressed)
     if pressed:
-        pass
         if key.plugin.startswith("builtins."):
             plugin = importlib.import_module("plugins." + key.plugin, None)
         else:           
@@ -60,7 +62,23 @@ def key_change_callback(deck, key_num, pressed):
             "pressed": pressed
         }
         plugin.main(state)
+
+def draw_deck(deck, increment = 0):
+    deck.reset()
+    change_page(increment)
+    for k in read_keys():
+        update_key_image(deck, k, False)
          
+def change_page(increment):
+    max = max_page(read_keys())
+    global PAGE
+    if PAGE + increment > max:
+        PAGE = 1
+    elif PAGE + increment < 1:
+        PAGE = max
+    else:
+        PAGE += increment
+    write_config("current_page", PAGE)
 
 def main():
     streamdecks = DeviceManager().enumerate()
@@ -71,8 +89,7 @@ def main():
         print("Opened '{}' device (serial number: '{}')".format(deck.deck_type(), deck.get_serial_number()))
         deck.set_brightness(100)
 
-        for k in read_keys():
-            update_key_image(deck, k, False)
+        draw_deck(deck)
 
         deck.set_key_callback(key_change_callback)
 

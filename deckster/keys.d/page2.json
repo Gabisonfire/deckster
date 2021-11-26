@@ -1,0 +1,43 @@
+[
+    {
+        "key": 0,
+        "page": 2,
+        "plugin": "builtins.play",
+        "args": {
+          "sound": "/home/gabisonfire/Documents/streamdeck/Assets/horn.mp3"
+        },
+        "icon_default": "sound.png",
+        "icon_pressed": "sound_pressed.png",
+        "label": "horn",
+        "font": "Roboto-Regular.ttf",
+        "name": "sound",
+        "button_type": "push",
+        "toggle_state": 0
+      }, 
+      {
+        "key": 14,
+        "page": 2,
+        "plugin": "builtins.page.next",
+        "args": {},
+        "icon_default": "next.png",
+        "icon_pressed": "next.png",
+        "label": "next",
+        "font": "Roboto-Regular.ttf",
+        "name": "next",
+        "button_type": "push",
+        "toggle_state": 0
+      },
+      {
+        "key": 10,
+        "page": 2,
+        "plugin": "builtins.page.previous",
+        "args": {},
+        "icon_default": "previous.png",
+        "icon_pressed": "previous.png",
+        "label": "previous",
+        "font": "Roboto-Regular.ttf",
+        "name": "get",
+        "button_type": "push",
+        "toggle_state": 0
+      }      
+]
