@@ -63,10 +63,13 @@ def defined_keys():
 
 # Need to add page finding and load all files
 def write_key_config(key, page, cfg, value):
-    with open(os.path.join(dir_path, "keys.json"), "r") as jsonFile:
-        data = json.load(jsonFile)
-        for x in data:
-            if x["key"] == key:
-                x[cfg] = value
-    with open(os.path.join(dir_path, "keys.json"), "w") as jsonFile:
-        json.dump(data, jsonFile, indent=2)
+    keysdir = read_config("keys_dir")
+    keyfiles = [f for f in os.listdir(keysdir) if os.path.isfile(os.path.join(keysdir, f))]
+    for f in keyfiles:
+        with open(os.path.join(keysdir, f), "r") as jsonFile:
+            data = json.load(jsonFile)
+            for x in data:
+                if x["key"] == key and x["page"] == page:
+                    x[cfg] = value
+            with open(os.path.join(keysdir, f), "w") as jsonFile:
+                json.dump(data, jsonFile, indent=2)

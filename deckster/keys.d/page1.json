@@ -1,63 +1,63 @@
 [
-    {
-      "key": 0,
-      "page": 1,
-      "plugin": "builtins.web.post",
-      "args": {
-        "url": "http://homea.luna.net/api/services/light/toggle",
-        "headers": {
-          "Content-type": "application/json",
-          "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmNGViMWQwMWZkOTM0MDVkOTI3MGE5Y2EwODg4ZmE4NSIsImlhdCI6MTYzNzcxNzUyNSwiZXhwIjoxOTUzMDc3NTI1fQ.irk1coPGoiKEo49gZMAq67-diiqFJRcra7gweixR2oU"
-        },
-        "json_data": {
-          "entity_id": "light.elgato_light_strip"
-        }
+  {
+    "key": 0,
+    "page": 1,
+    "plugin": "builtins.web.post",
+    "args": {
+      "url": "http://homea.luna.net/api/services/light/toggle",
+      "headers": {
+        "Content-type": "application/json",
+        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmNGViMWQwMWZkOTM0MDVkOTI3MGE5Y2EwODg4ZmE4NSIsImlhdCI6MTYzNzcxNzUyNSwiZXhwIjoxOTUzMDc3NTI1fQ.irk1coPGoiKEo49gZMAq67-diiqFJRcra7gweixR2oU"
       },
-      "icon_default": "web.png",
-      "icon_pressed": "web_pressed.png",
-      "label": "do post 2",
-      "font": "Roboto-Regular.ttf",
-      "name": "post",
-      "button_type": "toggle",
-      "toggle_state": false
+      "json_data": {
+        "entity_id": "light.elgato_light_strip"
+      }
     },
-    {
-      "key": 11,
-      "page": 1,
-      "plugin": "builtins.exit",
-      "args": {},
-      "icon_default": "exit.png",
-      "icon_pressed": "exit.png",
-      "label": "exit",
-      "font": "Roboto-Regular.ttf",
-      "name": "exit",
-      "button_type": "push",
-      "toggle_state": 0
-    },
-    {
-      "key": 14,
-      "page": 1,
-      "plugin": "builtins.page.next",
-      "args": {},
-      "icon_default": "next.png",
-      "icon_pressed": "next.png",
-      "label": "next",
-      "font": "Roboto-Regular.ttf",
-      "name": "next",
-      "button_type": "push",
-      "toggle_state": 0
-    },
-    {
-      "key": 10,
-      "page": 1,
-      "plugin": "builtins.page.previous",
-      "args": {},
-      "icon_default": "previous.png",
-      "icon_pressed": "previous.png",
-      "label": "previous",
-      "font": "Roboto-Regular.ttf",
-      "name": "get",
-      "button_type": "push",
-      "toggle_state": 0
-    }
-  ]
+    "icon_default": "web.png",
+    "icon_pressed": "web_pressed.png",
+    "label": "do post 2",
+    "font": "Roboto-Regular.ttf",
+    "name": "post",
+    "button_type": "toggle",
+    "toggle_state": false
+  },
+  {
+    "key": 11,
+    "page": 1,
+    "plugin": "builtins.exit",
+    "args": {},
+    "icon_default": "exit.png",
+    "icon_pressed": "exit.png",
+    "label": "exit",
+    "font": "Roboto-Regular.ttf",
+    "name": "exit",
+    "button_type": "push",
+    "toggle_state": 0
+  },
+  {
+    "key": 14,
+    "page": 1,
+    "plugin": "builtins.page.next",
+    "args": {},
+    "icon_default": "next.png",
+    "icon_pressed": "next.png",
+    "label": "next",
+    "font": "Roboto-Regular.ttf",
+    "name": "next",
+    "button_type": "push",
+    "toggle_state": 0
+  },
+  {
+    "key": 10,
+    "page": 1,
+    "plugin": "builtins.page.previous",
+    "args": {},
+    "icon_default": "previous.png",
+    "icon_pressed": "previous.png",
+    "label": "previous",
+    "font": "Roboto-Regular.ttf",
+    "name": "get",
+    "button_type": "push",
+    "toggle_state": 0
+  }
+]

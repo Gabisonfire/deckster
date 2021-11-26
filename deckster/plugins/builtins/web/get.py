@@ -2,6 +2,7 @@ import requests
 import json
 from common.configs import write_key_config
 
+# Needs arg for value to show in label
 def main(state):
     jkey = json.loads(state["key"])
     args = jkey["args"]
@@ -10,4 +11,3 @@ def main(state):
     headers = None
 
     res = requests.get(url, params = json_data, headers = headers)
-    write_key_config(jkey["key"], jkey["page"], "label", res.json()["properties"]["name"])
