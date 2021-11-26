@@ -61,13 +61,12 @@ def write_config(cfg, value):
 def defined_keys():
     return len(json.load(open(os.path.join(dir_path, "keys.json"))))
 
-def find_key_file(key, page):
-
-# def write_key_config(key, cfg, value):
-#     with open(os.path.join(dir_path, "keys.json"), "r") as jsonFile:
-#         data = json.load(jsonFile)
-#         for x in data:
-#             if x["key"] == key:
-#                 x[cfg] = value
-#     with open(os.path.join(dir_path, "keys.json"), "w") as jsonFile:
-#         json.dump(data, jsonFile, indent=2)
+# Need to add page finding and load all files
+def write_key_config(key, page, cfg, value):
+    with open(os.path.join(dir_path, "keys.json"), "r") as jsonFile:
+        data = json.load(jsonFile)
+        for x in data:
+            if x["key"] == key:
+                x[cfg] = value
+    with open(os.path.join(dir_path, "keys.json"), "w") as jsonFile:
+        json.dump(data, jsonFile, indent=2)
