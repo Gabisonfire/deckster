@@ -32,7 +32,7 @@ def render_key_image(deck, icon_filename, key):
     return PILHelper.to_native_format(deck, image)
 
 def update_key_image(deck, key, pressed, blank = False):
-    icon = handle_button(key, pressed)
+    icon = handle_button_icon(key, pressed)
     if key.page == PAGE or blank:
         if not blank:
             image = render_key_image(deck, icon, key)
@@ -41,7 +41,7 @@ def update_key_image(deck, key, pressed, blank = False):
         with deck:
             deck.set_key_image(key.key, image)
 
-def handle_button(key, pressed):
+def handle_button_icon(key, pressed):
     # If button is a toggle and is pressed, store new state.
     if (key.button_type == "toggle" or key.button_type == "timer_toggle") and pressed:
         key.toggle()
@@ -71,8 +71,11 @@ def key_change_callback(deck, key_num, pressed):
         toggle_job(f"{key.key}{key.page}", key.toggle_state)
         return
 
+    handle_button_action(deck, key, pressed)
     update_key_image(deck, key, pressed)
+    
 
+def handle_button_action(deck, key, pressed):
     if pressed:
         if key.plugin.startswith("builtins."):
             plugin = importlib.import_module("plugins." + key.plugin, None)
@@ -80,12 +83,7 @@ def key_change_callback(deck, key_num, pressed):
            spec = importlib.util.spec_from_file_location(key.plugin.split(".")[-1], os.path.join(PLUGINS_DIR, key.plugin.replace(".", "/") + ".py"))
            plugin = importlib.util.module_from_spec(spec)
            spec.loader.exec_module(plugin)
-        state = {
-            "deck": deck, 
-            "key": key.to_json(),
-            "pressed": pressed
-        }
-        plugin.main(state)
+        plugin.main(deck, key, pressed)
 
 def draw_deck(deck, increment = 0, init_draw = False):
     clear(deck)

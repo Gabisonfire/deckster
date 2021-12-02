@@ -1,13 +1,16 @@
 import requests
-import json
-from common.configs import write_key_config
+from deckster import update_key_image
 
-# Needs arg for value to show in label
-def main(state):
-    jkey = json.loads(state["key"])
-    args = jkey["args"]
+def main(deck, key, pressed):
+    args = key.args
     url = args["url"]
     json_data = None
     headers = None
 
     res = requests.get(url, params = json_data, headers = headers)
+
+    d = res.json()["unixtime"]
+    print(d)
+    key.label = str(d)
+    key.update_label()
+    update_key_image(deck, key, pressed)

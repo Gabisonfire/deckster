@@ -31,8 +31,6 @@ def read_keys():
         templist.append(Key(x))
     return templist
 
-# def write_keys() ?
-
 def find_key(key, page, key_list):
     for x in key_list:
         if x.key == key and x.page == page:
@@ -46,10 +44,11 @@ def max_page(key_list):
     return high
 
 def write_key_config(key, page, cfg, value):
-    print(f"Writing {cfg} to {value} for key {key} on page {page}")
     keysdir = read_config("keys_dir")
     keyfiles = [f for f in os.listdir(keysdir) if os.path.isfile(os.path.join(keysdir, f))]
     cfg_file = None
+    index = -1
+    print(keyfiles)
     for f in keyfiles:
         with open(os.path.join(keysdir, f), "r") as jsonFile:
             data = json.load(jsonFile)
@@ -57,9 +56,13 @@ def write_key_config(key, page, cfg, value):
                 if x["key"] == key and x["page"] == page:
                     print(f"Key {key} on page {page} belongs to {f}")
                     cfg_file = f
+                    break
+            index+=1
     if cfg_file is not None:
         with open(os.path.join(keysdir, cfg_file), "w") as jsonFile:
-            data[key][cfg] = value
+            print(f"Writing {key} -> {cfg} : {value}")
+            print(data[index])
+            data[index][cfg] = value
             json.dump(data, jsonFile, indent=2)
 
 def empty_set(key_count):

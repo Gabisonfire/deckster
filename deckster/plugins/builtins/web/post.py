@@ -2,8 +2,8 @@ import requests
 import json
 
 
-def main(state):
-    args = json.loads(state["key"])["args"]
+def main(deck, key, pressed):
+    args = key.args
     url = args["url"]
     json_data = json.dumps(args["json_data"])
     headers = args["headers"]

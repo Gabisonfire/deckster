@@ -1,7 +1,7 @@
 ## To do
 
 - error handling
-- doc -> general, plugin dev
+- doc -> general, plugin dev -> from deckster import update_key_image if refresh needed
 - pip package
 - github action
 - on timer
@@ -9,13 +9,13 @@
 - get plugin return as label
 
 
-- full label
-  - size
-  - color
+
 - debug logging
-- state in seperate file?
 
 - set brightness in config
+- two labels (label and display)
+- timezone
+- get request json filter
 
 
 ### Plugins
@@ -41,3 +41,6 @@ button_type:
 - pages
 - clear keys
 - hide label == @hide
+- full label -> 25 == centered
+  - size
+  - color

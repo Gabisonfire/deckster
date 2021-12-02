@@ -1,7 +1,6 @@
 from common.scheduler import stop_jobs
 
-def main(state):
-    deck = state["deck"]
+def main(deck, key, pressed):
     stop_jobs()
     print("Bye")
     with deck:

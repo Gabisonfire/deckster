@@ -25,6 +25,24 @@
     "toggle_state": false
   },
   {
+    "key": 3,
+    "page": 1,
+    "plugin": "builtins.web.get",
+    "args": {
+      "url": "http://worldtimeapi.org/api/timezone/America/Toronto"
+    },
+    "receiver": "label",
+    "icon_default": "@hide",
+    "icon_pressed": "@hide",
+    "label": "1638476721",
+    "font": "Roboto-Regular.ttf",
+    "label_offset": 25,
+    "font_size": 14,
+    "button_type": "timer_on",
+    "toggle_state": false,
+    "interval": 2
+  },
+  {
     "key": 4,
     "page": 1,
     "plugin": "builtins.shell",
@@ -38,7 +56,7 @@
     "icon_pressed": "shell.png",
     "label": "shell",
     "font": "Roboto-Regular.ttf",
-    "button_type": "timer_on",
+    "button_type": "timer_toggle",
     "interval": 10,
     "toggle_state": 0
   },
@@ -49,7 +67,7 @@
     "args": {},
     "icon_default": "previous.png",
     "icon_pressed": "previous.png",
-    "label": "previous",
+    "label": "prev",
     "font": "Roboto-Regular.ttf",
     "button_type": "push",
     "toggle_state": 0
