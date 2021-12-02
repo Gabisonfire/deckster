@@ -10,20 +10,17 @@
   - size
   - color
 - debug logging
+- state in seperate file?
 
 - set brightness in config
 
+
+
 button_type:
-  - timer_on
+  - timer_push
   - timer_toggle
 
 ### Plugins
-- shell command
-
-
-
-
-
 
 
 
@@ -33,8 +30,13 @@ button_type:
   - push
   - toggle
 
-- pages
-- plugin: web get/post
-- plugin: exit
-- plugin: playsound
+
+- plugin:
+  - web get/post
+  - exit
+  - playsound
+  - shell command
+
 - fix skipping keys (blanks?)
+- pages
+- clear keys

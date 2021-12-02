@@ -17,9 +17,39 @@
     "icon_pressed": "web_pressed.png",
     "label": "do post 2",
     "font": "Roboto-Regular.ttf",
-    "name": "post",
-    "button_type": "toggle",
+    "button_type": "timer_on",
+    "interval": 5,
     "toggle_state": false
+  },
+  {
+    "key": 4,
+    "page": 1,
+    "plugin": "builtins.shell",
+    "args": {
+      "command": [
+        "echo",
+        "hi mom"
+      ]
+    },
+    "icon_default": "shell.png",
+    "icon_pressed": "shell.png",
+    "label": "shell",
+    "font": "Roboto-Regular.ttf",
+    "button_type": "timer_on",
+    "interval": 10,
+    "toggle_state": 0
+  },
+  {
+    "key": 10,
+    "page": 1,
+    "plugin": "builtins.page.previous",
+    "args": {},
+    "icon_default": "previous.png",
+    "icon_pressed": "previous.png",
+    "label": "previous",
+    "font": "Roboto-Regular.ttf",
+    "button_type": "push",
+    "toggle_state": 0
   },
   {
     "key": 11,
@@ -30,7 +60,6 @@
     "icon_pressed": "exit.png",
     "label": "exit",
     "font": "Roboto-Regular.ttf",
-    "name": "exit",
     "button_type": "push",
     "toggle_state": 0
   },
@@ -43,21 +72,7 @@
     "icon_pressed": "next.png",
     "label": "next",
     "font": "Roboto-Regular.ttf",
-    "name": "next",
     "button_type": "push",
-    "toggle_state": 0
-  },
-  {
-    "key": 10,
-    "page": 1,
-    "plugin": "builtins.page.previous",
-    "args": {},
-    "icon_default": "previous.png",
-    "icon_pressed": "previous.png",
-    "label": "previous",
-    "font": "Roboto-Regular.ttf",
-    "name": "get",
-    "button_type": "push",
-    "toggle_state": 0
+    "toggle_state": true
   }
 ]

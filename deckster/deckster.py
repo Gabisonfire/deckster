@@ -2,16 +2,15 @@ import os
 import threading
 import importlib
 import importlib.util
-
-from common.configs import max_page, read_keys, read_config, write_key_config, find_key, write_config
+import common.configs as cfg
 from PIL import Image, ImageDraw, ImageFont
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.ImageHelpers import PILHelper
 
-ICONS_DIR = read_config("icons_dir")
-PLUGINS_DIR = read_config("plugins_dir")
+ICONS_DIR = cfg.read_config("icons_dir")
+PLUGINS_DIR = cfg.read_config("plugins_dir")
 PLUGINS_DIR = os.path.expanduser(PLUGINS_DIR)
-PAGE = read_config("current_page")
+PAGE = cfg.read_config("current_page")
 
 def render_key_image(deck, icon_filename, font_filename, label_text):
     icon = Image.open(os.path.join(ICONS_DIR, icon_filename))
@@ -21,33 +20,42 @@ def render_key_image(deck, icon_filename, font_filename, label_text):
     draw.text((image.width / 2, image.height - 5), text=label_text, font=font, anchor="ms", fill="white")
     return PILHelper.to_native_format(deck, image)
 
-def update_key_image(deck, key, pressed):
-    # If button is type toggle and is pressed, show pressed or default based on state, invert state
-    if key.button_type == "toggle" and pressed:
-        if not key.toggle_state:
-            icon = key.icon_pressed
+def update_key_image(deck, key, pressed, blank = False):
+    icon = handle_button(key, pressed)
+    if key.page == PAGE or blank:
+        if not blank:
+            image = render_key_image(deck, icon, key.font, key.label)
         else:
-            icon = key.icon_default
-        write_key_config(key, "toggle_state", not key.toggle_state)
-    
-    # If button is toggle, not pressed and in "on" state, keep pressed
-    elif key.button_type == "toggle" and not pressed and key.toggle_state:
-        icon = key.icon_pressed
-    # If push button
-    else:
-        icon = key.icon_pressed if pressed else key.icon_default
-    if key.page == PAGE:
-        image = render_key_image(deck, icon, key.font, key.label)
+            image = None
         with deck:
             deck.set_key_image(key.key, image)
 
+def handle_button(key, pressed):
+    # If button is a toggle and is pressed, store new state.
+    if (key.button_type == "toggle" or key.button_type == "timer_toggle") and pressed:
+        cfg.write_key_config(key.key , key.page, "toggle_state", not key.toggle_state)
+        if not key.toggle_state:
+            return key.icon_pressed
+        else:
+            return key.icon_default
+    
+    # If button is toggle, not pressed and in "on" state, keep pressed
+    elif (key.button_type == "toggle" or key.button_type == "timer_toggle") and not pressed and key.toggle_state:
+        return key.icon_pressed
+
+    # If push button
+    else:
+        return key.icon_pressed if pressed else key.icon_default
+
 def key_change_callback(deck, key_num, pressed):
     print("Deck {} Key {} = {}".format(deck.id(), key_num, pressed), flush=True)
-    current_page = read_config("current_page")
-    key = find_key(key_num, current_page, read_keys())
+    current_page = cfg.read_config("current_page")
+    key = cfg.find_key(key_num, current_page, cfg.read_keys())
+
     # If the key is blank, don't do anything
-    if key == None:
+    if key == None or key.button_type == "timer_on":
         return
+
     update_key_image(deck, key, pressed)
     if pressed:
         if key.plugin.startswith("builtins."):
@@ -63,14 +71,22 @@ def key_change_callback(deck, key_num, pressed):
         }
         plugin.main(state)
 
-def draw_deck(deck, increment = 0):
-    deck.reset()
+def draw_deck(deck, increment = 0, init_draw = False):
+    clear(deck)
     change_page(increment)
-    for k in read_keys():
+    for k in cfg.read_keys():
+        if k.button_type == "timer_on" and init_draw:
+            k.schedule_timer(deck)
         update_key_image(deck, k, False)
          
+
+def clear(deck):
+    keys = cfg.empty_set(deck.key_count())
+    for k in keys:
+        update_key_image(deck, k, False, True)
+
 def change_page(increment):
-    max = max_page(read_keys())
+    max = cfg.max_page(cfg.read_keys())
     global PAGE
     if PAGE + increment > max:
         PAGE = 1
@@ -78,7 +94,7 @@ def change_page(increment):
         PAGE = max
     else:
         PAGE += increment
-    write_config("current_page", PAGE)
+    cfg.write_config("current_page", PAGE)
 
 def main():
     streamdecks = DeviceManager().enumerate()
@@ -89,7 +105,7 @@ def main():
         print("Opened '{}' device (serial number: '{}')".format(deck.deck_type(), deck.get_serial_number()))
         deck.set_brightness(100)
 
-        draw_deck(deck)
+        draw_deck(deck, init_draw=True)
 
         deck.set_key_callback(key_change_callback)
 
