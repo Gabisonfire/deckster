@@ -6,8 +6,9 @@
 - github action
 - on timer
 
+- get plugin return as label
 
-- hide label
+
 - full label
   - size
   - color
@@ -29,6 +30,7 @@ button_type:
   - timer_on
   - timer_toggle
 
+
 - plugin:
   - web get/post
   - exit
@@ -38,3 +40,4 @@ button_type:
 - fix skipping keys (blanks?)
 - pages
 - clear keys
+- hide label == @hide

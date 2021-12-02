@@ -13,19 +13,29 @@ PLUGINS_DIR = cfg.read_config("plugins_dir")
 PLUGINS_DIR = os.path.expanduser(PLUGINS_DIR)
 PAGE = cfg.read_config("current_page")
 
-def render_key_image(deck, icon_filename, font_filename, label_text):
-    icon = Image.open(os.path.join(ICONS_DIR, icon_filename))
-    image = PILHelper.create_scaled_image(deck, icon, margins=[0, 0, 20, 0])
+def render_key_image(deck, icon_filename, key):
+    bottom_margin = 0 if key.label == "@hide" else 20
+    if not icon_filename == "@hide":
+        icon = Image.open(os.path.join(ICONS_DIR, icon_filename))
+        image = PILHelper.create_scaled_image(deck, icon, margins=[0, 0, bottom_margin, 0])
+    else:
+        image = PILHelper.create_image(deck)
+    
     draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype(font_filename, 14)
-    draw.text((image.width / 2, image.height - 5), text=label_text, font=font, anchor="ms", fill="white")
+    font = ImageFont.truetype(key.font, key.font_size)
+    actual_text = "" if key.label == "@hide" else key.label
+    if not key.label == "@hide" and icon_filename == "@hide":
+        draw.text((image.width / 2, image.height - key.label_offset), text=actual_text, font=font, anchor="ms", fill=key.label_color)
+    elif not key.label == "@hide":
+        draw.text((image.width / 2, image.height - key.label_offset), text=actual_text, font=font, anchor="ms", fill=key.label_color)
+    
     return PILHelper.to_native_format(deck, image)
 
 def update_key_image(deck, key, pressed, blank = False):
     icon = handle_button(key, pressed)
     if key.page == PAGE or blank:
         if not blank:
-            image = render_key_image(deck, icon, key.font, key.label)
+            image = render_key_image(deck, icon, key)
         else:
             image = None
         with deck:

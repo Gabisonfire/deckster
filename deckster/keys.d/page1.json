@@ -13,10 +13,13 @@
         "entity_id": "light.elgato_light_strip"
       }
     },
-    "icon_default": "web.png",
-    "icon_pressed": "web_pressed.png",
-    "label": "Flash lights",
+    "icon_default": "@hide",
+    "icon_pressed": "@hide",
+    "label": "hide",
+    "label_offset": 25,
+    "label_color": "green",
     "font": "Roboto-Regular.ttf",
+    "font_size": 30,
     "button_type": "timer_toggle",
     "interval": 5,
     "toggle_state": false

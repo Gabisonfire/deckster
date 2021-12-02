@@ -13,36 +13,61 @@ valid_buttons = [
 
 class Key:
     def __init__(self, json_key):
-        # Mandatory
+        # Required
         self.key = json_key["key"]
         self.page = json_key["page"]
         self.icon_default = json_key["icon_default"]
+        self.plugin = json_key["plugin"]
+
         if json_key["button_type"] in valid_buttons:
             self.button_type = json_key["button_type"]
         else:
             raise Exception(f"Invalid button type: '{json_key['button_type']}'")
-        self.plugin = json_key["plugin"]
         
-        # Optional
-        if "icon_pressed" in json_key:
-            self.icon_pressed = json_key["icon_pressed"]
-        else:
-            self.icon_pressed = self.icon_default
-        if "label" in json_key:
-            self.label = json_key["label"]
-        if "font" in json_key:
-            self.font = json_key["font"]
-        if "args" in json_key:
-            self.args = json_key["args"]
-        if "toggle_state" in json_key:
-            self.toggle_state = json_key["toggle_state"]
-        else:
-            self.toggle_state = False
         if self.button_type.startswith("timer"):
             if not "interval" in json_key:
                 raise Exception(f"'interval' value is required for button type '{self.button_type}'")
             else:
                 self.interval = json_key["interval"]
+
+        # Optional
+        if "font_size" in json_key:
+            self.font_size = json_key["font_size"]
+        else:
+            self.font_size = 14
+
+        if "icon_pressed" in json_key:
+            self.icon_pressed = json_key["icon_pressed"]
+        else:
+            self.icon_pressed = self.icon_default
+
+        if "label" in json_key:
+            self.label = json_key["label"]
+
+        if "font" in json_key:
+            self.font = json_key["font"]
+        else:
+            self.font = "Roboto-Regular.ttf"
+
+        if "args" in json_key:
+            self.args = json_key["args"]
+
+        if "toggle_state" in json_key:
+            self.toggle_state = json_key["toggle_state"]
+        else:
+            self.toggle_state = False
+
+        if "label_color" in json_key:
+            self.label_color = json_key["label_color"]
+        else:
+            self.label_color = "white"
+        
+        if "label_offset" in json_key:
+            self.label_offset = json_key["label_offset"]
+        else:
+            self.label_offset = 5
+
+
 
     def to_json(self):
         return json.dumps(self.__dict__)
