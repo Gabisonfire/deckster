@@ -5,6 +5,8 @@
 - pip package
 - github action
 - on timer
+
+
 - hide label
 - full label
   - size
@@ -15,11 +17,6 @@
 - set brightness in config
 
 
-
-button_type:
-  - timer_push
-  - timer_toggle
-
 ### Plugins
 
 
@@ -29,7 +26,8 @@ button_type:
 button_type:
   - push
   - toggle
-
+  - timer_on
+  - timer_toggle
 
 - plugin:
   - web get/post

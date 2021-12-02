@@ -3,6 +3,7 @@ import threading
 import importlib
 import importlib.util
 import common.configs as cfg
+from common.scheduler import toggle_job
 from PIL import Image, ImageDraw, ImageFont
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.ImageHelpers import PILHelper
@@ -33,7 +34,7 @@ def update_key_image(deck, key, pressed, blank = False):
 def handle_button(key, pressed):
     # If button is a toggle and is pressed, store new state.
     if (key.button_type == "toggle" or key.button_type == "timer_toggle") and pressed:
-        cfg.write_key_config(key.key , key.page, "toggle_state", not key.toggle_state)
+        key.toggle()
         if not key.toggle_state:
             return key.icon_pressed
         else:
@@ -48,15 +49,20 @@ def handle_button(key, pressed):
         return key.icon_pressed if pressed else key.icon_default
 
 def key_change_callback(deck, key_num, pressed):
-    print("Deck {} Key {} = {}".format(deck.id(), key_num, pressed), flush=True)
+    print("Deck {} Key {}: {}".format(deck.id(), key_num, "Pressed" if pressed else "Released"), flush=True)
     current_page = cfg.read_config("current_page")
     key = cfg.find_key(key_num, current_page, cfg.read_keys())
 
     # If the key is blank, don't do anything
     if key == None or key.button_type == "timer_on":
         return
+    if key.button_type == "timer_toggle" and pressed:
+        key.toggle()
+        toggle_job(f"{key.key}{key.page}", key.toggle_state)
+        return
 
     update_key_image(deck, key, pressed)
+
     if pressed:
         if key.plugin.startswith("builtins."):
             plugin = importlib.import_module("plugins." + key.plugin, None)
@@ -75,7 +81,7 @@ def draw_deck(deck, increment = 0, init_draw = False):
     clear(deck)
     change_page(increment)
     for k in cfg.read_keys():
-        if k.button_type == "timer_on" and init_draw:
+        if k.button_type.startswith("timer") and init_draw:
             k.schedule_timer(deck)
         update_key_image(deck, k, False)
          

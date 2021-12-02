@@ -47,9 +47,12 @@ class Key:
     def to_json(self):
         return json.dumps(self.__dict__)
     
-    def schedule_timer(self, deck):
-        if not self.button_type == "timer_on":
+    def schedule_timer(self, deck):        
+        if not self.button_type.startswith("timer"):
             return
+        paused = False
+        if self.button_type == "timer_toggle":
+            paused = True
         if self.plugin.startswith("builtins."):
             plugin = importlib.import_module("plugins." + self.plugin, None)
         else:           
@@ -61,12 +64,15 @@ class Key:
             "key": self.to_json(),
             "pressed": True
         }
-        common.scheduler.add_job(lambda: plugin.main(state), self.interval)
+        common.scheduler.add_job(lambda: plugin.main(state), self.interval, id=f"{self.key}{self.page}", paused = paused)
+        print(f"Scheduling job({self.key}{self.page}), is paused: {paused}")
 
+    def write_state(self):
+        print(f"Writing state for {self.key}:{self.toggle_state}")
+        common.configs.write_key_config(self.key , self.page, "toggle_state", self.toggle_state)
 
+    def toggle(self):
+        self.toggle_state = not self.toggle_state
+        self.write_state()
+        return self.toggle_state
 
-
-    
-
-    #def read_state()
-    #def write_state()

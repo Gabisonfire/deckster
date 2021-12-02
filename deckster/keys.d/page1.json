@@ -15,9 +15,9 @@
     },
     "icon_default": "web.png",
     "icon_pressed": "web_pressed.png",
-    "label": "do post 2",
+    "label": "Flash lights",
     "font": "Roboto-Regular.ttf",
-    "button_type": "timer_on",
+    "button_type": "timer_toggle",
     "interval": 5,
     "toggle_state": false
   },
