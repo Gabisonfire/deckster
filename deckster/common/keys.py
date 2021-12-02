@@ -1,8 +1,9 @@
 import json
-import common.scheduler
 import importlib
 import importlib.util
 import os
+from common import scheduler
+from common import configs
 
 valid_buttons = [
     "push",
@@ -96,16 +97,16 @@ class Key:
            spec = importlib.util.spec_from_file_location(self.plugin.split(".")[-1], os.path.join(common.configs.read_config("plugins_dir"), self.plugin.replace(".", "/") + ".py"))
            plugin = importlib.util.module_from_spec(spec)
            spec.loader.exec_module(plugin)
-        common.scheduler.add_job(lambda: plugin.main(deck, self, False), self.interval, id=f"{self.key}{self.page}", paused = paused)
+        scheduler.add_job(lambda: plugin.main(deck, self, False), self.interval, id=f"{self.key}{self.page}", paused = paused)
         print(f"Scheduling job({self.key}{self.page}), is paused: {paused}")
 
     def write_state(self):
         print(f"Writing state for {self.key}:{self.toggle_state}")
-        common.configs.write_key_config(self.key , self.page, "toggle_state", self.toggle_state)
+        configs.write_key_config(self.key , self.page, "toggle_state", self.toggle_state)
 
     def update_label(self):
         print(f"Writing state for {self.key}:{self.label}")
-        common.configs.write_key_config(self.key , self.page, "label", self.label)
+        configs.write_key_config(self.key , self.page, "label", self.label)
 
     def toggle(self):
         self.toggle_state = not self.toggle_state
