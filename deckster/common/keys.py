@@ -1,9 +1,13 @@
 import json
 import importlib
 import importlib.util
+import logging
 import os
 from common import scheduler
-from common import configs
+
+
+logger = logging.getLogger("deckster")
+
 
 valid_buttons = [
     "push",
@@ -16,6 +20,7 @@ class Key:
     def __init__(self, json_key):
         # Required
         self.key = json_key["key"]
+        logger.debug(f"Instantiating key {self.key}: {json_key}")
         self.page = json_key["page"]
         self.icon_default = json_key["icon_default"]
         self.plugin = json_key["plugin"]
@@ -73,30 +78,23 @@ class Key:
     def to_json(self):
         return json.dumps(self.__dict__)
     
-    def schedule_timer(self, deck):        
+    def schedule_timer(self, deck, plugin_dir):
         if not self.button_type.startswith("timer"):
             return
+        logger.debug(f"Scheduling timer on key: {self.key}.")
         paused = False
         if self.button_type == "timer_toggle":
             paused = True
         if self.plugin.startswith("builtins."):
-            plugin = importlib.import_module("plugins." + self.plugin, None)
+            logger.debug(f"Importing builtin plugin 'plugins.{self.plugin}'")
+            plugin = importlib.import_module(f"plugins.{self.plugin}", None)
         else:           
-           spec = importlib.util.spec_from_file_location(self.plugin.split(".")[-1], os.path.join(configs.read_config("plugins_dir"), self.plugin.replace(".", "/") + ".py"))
+           spec = importlib.util.spec_from_file_location(self.plugin.split(".")[-1], os.path.join(plugin_dir, self.plugin.replace(".", "/") + ".py"))
            plugin = importlib.util.module_from_spec(spec)
            spec.loader.exec_module(plugin)
         scheduler.add_job(lambda: plugin.main(deck, self, False), self.interval, id=f"{self.key}{self.page}", paused = paused)
-        print(f"Scheduling job({self.key}{self.page}), is paused: {paused}")
-
-    def write_state(self):
-        print(f"Writing state for key {self.key} -> {self.toggle_state}")
-        configs.write_key_config(self.key , self.page, "toggle_state", self.toggle_state)
-
-    def update_label(self):
-        print(f"Writing label for key {self.key} -> {self.label}")
-        configs.write_key_config(self.key , self.page, "label", self.label)
+        logger.info(f"Scheduling job({self.key}{self.page}), is paused: {paused}")
 
     def toggle(self):
         self.toggle_state = not self.toggle_state
-        self.write_state()
         return self.toggle_state

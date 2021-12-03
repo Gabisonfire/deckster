@@ -1,8 +1,11 @@
+import logging
 from common.scheduler import stop_jobs
+
+logger = logging.getLogger("deckster")
 
 def main(deck, key, pressed):
     stop_jobs()
-    print("Bye")
+    logger.info("Bye")
     with deck:
         deck.reset()
         deck.close()

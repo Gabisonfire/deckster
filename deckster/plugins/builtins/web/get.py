@@ -1,7 +1,9 @@
 import requests
-from deckster import update_key_image
+import logging
+from deckster import update_key_image, update_label
 
 def main(deck, key, pressed):
+    logger = logging.getLogger("deckster")
     args = key.args
     url = args["url"]
     if "json_data" in args:
@@ -14,15 +16,20 @@ def main(deck, key, pressed):
         headers = None
 
     try:
+        logger.debug(f"Trying GET request for {url} with parameters: {json_data} and headers: {headers}.")
         res = requests.get(url, params = json_data, headers = headers)
     except Exception as e:
-        print(f"Request to {url} failed: {e}")
+        logger.error(f"Request to {url} failed: {e}")
 
     if not res.status_code in args["status_codes"]:
-        print(f"Status code returned {res.status_code} not in expected codes.")
+        logger.error(f"Status code returned {res.status_code} not in expected codes.")
         return
 
     d = res.json()[args["json_parse"]]
-    key.label = str(d)
-    key.update_label()
-    update_key_image(deck, key, pressed)
+    logger.info(f"Parsed result: '{d}'' from {url}")
+    if "send_to_label" in key.args:
+        if key.args["send_to_label"]:
+            logger.info(f"Sending GET result to label for key {key.key}.")
+            key.label = str(d)
+            update_label(key)
+            update_key_image(deck, key, pressed)

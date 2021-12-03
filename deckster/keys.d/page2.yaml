@@ -40,12 +40,13 @@
     status_codes:
     - 200
     - 201
+    send_to_label: true
     json_parse: day_of_week
   icon_default: '@hide'
   icon_pressed: '@hide'
-  label: '4'
+  label: '5'
   font: Roboto-Regular.ttf
   label_offset: 25
   font_size: 14
-  button_type: timer_on
+  button_type: timer_toggle
   interval: 2

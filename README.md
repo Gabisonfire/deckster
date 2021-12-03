@@ -1,20 +1,13 @@
+## Future
+- install/list plugins from CLI
+
 ## To do
 
-- error handling
+
 - doc -> general, plugin dev -> from deckster import update_key_image if refresh needed
 - pip package
 - github action
-- on timer
-
-
-
-
-
-- debug logging
-
-- set brightness in config
 - two labels (label and display)
-- timezone
 
 
 
@@ -46,3 +39,7 @@ button_type:
   - color
 - get plugin return as label
 - get request json filter
+- yaml compat
+- debug logging
+- set brightness in config
+- error handling

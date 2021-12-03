@@ -1,17 +1,23 @@
 import json
 import os
 import yaml
-from pathlib import Path
+import logging
 from common.keys import Key
+from pathlib import Path
+
+logger = logging.getLogger("deckster")
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 dir_path = Path(dir_path).parent.parent
 
+logger.debug(f"Config path set to: {dir_path}")
+
 def read_config(cfg):
     try:
+        logger.debug(f"Reading from: {os.path.join(dir_path, 'config.json')}")
         cfg_file = json.load(open(os.path.join(dir_path, "config.json")))
     except Exception as e:
-        print(f"{os.path.join(dir_path, 'config.json')} contains invalid JSON. ({e})")
+        logger.error(f"{os.path.join(dir_path, 'config.json')} contains invalid JSON. ({e})")
 
     for k in cfg_file:
         if k == cfg:
@@ -19,32 +25,40 @@ def read_config(cfg):
 
 def write_config(cfg, value):
     with open(os.path.join(dir_path, "config.json"), "r") as cfgFile:
+        logger.debug(f"Reading current config")
         data = json.load(cfgFile)
         data[cfg] = value
     with open(os.path.join(dir_path, "config.json"), "w") as cfgFile:
+        logger.debug(f"Writing '{value}' to '{cfg}'")
         json.dump(data, cfgFile, indent=2)
 
 def read_keys():
+    logger.debug(f"Reading keys...")
     templist = []
     keysdir = read_config("keys_dir")
     keyfiles = [f for f in os.listdir(keysdir) if os.path.isfile(os.path.join(keysdir, f))]
+    logger.debug(f"Found keys file: {keyfiles}")
     json_keys = []
     for files in keyfiles:
+        logger.debug(f"Reading {files}")
         try:
             if os.path.splitext(files)[1] in [".yaml", ".yml"]:
+                logger.debug(f"{files} is YAML")
                 y = yaml.safe_load(open(os.path.join(keysdir, files)))                
                 tmp_json = json.loads(json.dumps(y))
             else:
+                logger.debug(f"{files} is JSON")
                 tmp_json = json.load(open(os.path.join(keysdir, files)))
             for k in tmp_json:
                 json_keys.append(k)
         except Exception as e:
-            print(f"Error parsing {os.path.join(keysdir, files)}: {e}")   
+            logger.error(f"Error parsing {os.path.join(keysdir, files)}: {e}")   
     for x in json_keys:
         templist.append(Key(x))
     return templist
 
 def find_key(key, page, key_list):
+    logger.debug(f"Finding key {key} on page {page}.")
     for x in key_list:
         if x.key == key and x.page == page:
             return x
@@ -56,23 +70,24 @@ def max_page(key_list):
             high = x.page
     return high
 
-#configs.write_key_config(3 , 1, "label", patate)
-
 def write_key_config(key, page, cfg, value):
     keysdir = read_config("keys_dir")
+    logger.debug(f"{keysdir} is the keys directory.")
     keyfiles = [f for f in os.listdir(keysdir) if os.path.isfile(os.path.join(keysdir, f))]
     cfg_file = None
     for f in keyfiles:
-        print(f"parsing {f}")
+        logger.debug(f"Parsing {f}...")
         with open(os.path.join(keysdir, f), "r") as jsonFile:
             if os.path.splitext(f)[1] in [".yml", ".yaml"]:
+                logger.debug(f"{f} is YAML")
                 y = yaml.safe_load(jsonFile)
                 data = json.loads(json.dumps(y))
             else:
+                logger.debug(f"{f} is JSON")
                 data = json.load(jsonFile)
             for x in data:
                 if x["key"] == key and x["page"] == page:
-                    print(f"Key {key} on page {page} belongs to {f}")
+                    logger.debug(f"Found that key {key} on page {page} belongs to {f}")
                     cfg_file = f
                     break
             else:                
@@ -80,15 +95,17 @@ def write_key_config(key, page, cfg, value):
             break
     if cfg_file is not None:
         with open(os.path.join(keysdir, cfg_file), "w") as jsonFile:
-            print(f"Writing {key} -> {cfg} : {value}")
+            logger.debug(f"Writing modifications to {os.path.join(keysdir, cfg_file)}, Key {key}, {cfg} -> {value}")
             for x in data:
                 if x["key"] == key and x["page"] == page:
                     x[cfg] = value
             if os.path.splitext(os.path.join(keysdir, cfg_file))[1] in [".yml", ".yaml"]:
+                logger.debug("Converting to YAML")
                 yaml.dump(data, jsonFile, allow_unicode=True, sort_keys=False)
             else:
-                print("wat")
                 json.dump(data, jsonFile, indent=2)
+    else:
+        logger.error(f"Could not find a match for key {key} on page {page}.")
 
 def empty_set(key_count):
     ks = []

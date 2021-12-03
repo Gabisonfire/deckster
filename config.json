@@ -3,5 +3,6 @@
   "plugins_dir": "~/Documents/deckster-plugins",
   "current_page": 1,
   "keys_dir": "./keys.d",
-  "log_level": "info"
+  "loglevel": "info",
+  "brightness": 100
 }
