@@ -82,7 +82,7 @@ class Key:
         if self.plugin.startswith("builtins."):
             plugin = importlib.import_module("plugins." + self.plugin, None)
         else:           
-           spec = importlib.util.spec_from_file_location(self.plugin.split(".")[-1], os.path.join(common.configs.read_config("plugins_dir"), self.plugin.replace(".", "/") + ".py"))
+           spec = importlib.util.spec_from_file_location(self.plugin.split(".")[-1], os.path.join(configs.read_config("plugins_dir"), self.plugin.replace(".", "/") + ".py"))
            plugin = importlib.util.module_from_spec(spec)
            spec.loader.exec_module(plugin)
         scheduler.add_job(lambda: plugin.main(deck, self, False), self.interval, id=f"{self.key}{self.page}", paused = paused)
