@@ -6,7 +6,7 @@
 - github action
 - on timer
 
-- get plugin return as label
+
 
 
 
@@ -15,7 +15,7 @@
 - set brightness in config
 - two labels (label and display)
 - timezone
-- get request json filter
+
 
 
 ### Plugins
@@ -44,3 +44,5 @@ button_type:
 - full label -> 25 == centered
   - size
   - color
+- get plugin return as label
+- get request json filter

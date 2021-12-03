@@ -16,7 +16,11 @@ PAGE = cfg.read_config("current_page")
 def render_key_image(deck, icon_filename, key):
     bottom_margin = 0 if key.label == "@hide" else 20
     if not icon_filename == "@hide":
-        icon = Image.open(os.path.join(ICONS_DIR, icon_filename))
+        path = os.path.join(ICONS_DIR, icon_filename)
+        if os.path.isfile(path):
+            icon = Image.open(path)
+        else:
+            raise FileNotFoundError(f"File '{path}' does not exist.")
         image = PILHelper.create_scaled_image(deck, icon, margins=[0, 0, bottom_margin, 0])
     else:
         image = PILHelper.create_image(deck)
@@ -78,11 +82,15 @@ def key_change_callback(deck, key_num, pressed):
 def handle_button_action(deck, key, pressed):
     if pressed:
         if key.plugin.startswith("builtins."):
-            plugin = importlib.import_module("plugins." + key.plugin, None)
-        else:           
-           spec = importlib.util.spec_from_file_location(key.plugin.split(".")[-1], os.path.join(PLUGINS_DIR, key.plugin.replace(".", "/") + ".py"))
-           plugin = importlib.util.module_from_spec(spec)
-           spec.loader.exec_module(plugin)
+            plugin = importlib.import_module(f"plugins.{key.plugin}", None)
+        else:
+            path =  os.path.join(PLUGINS_DIR, key.plugin.replace(".", "/") + ".py")
+            if os.path.isfile(path):
+                spec = importlib.util.spec_from_file_location(key.plugin.split(".")[-1], path)
+                plugin = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(plugin)
+            else:
+                raise FileNotFoundError(f"File '{path}' does not exist.")
         plugin.main(deck, key, pressed)
 
 def draw_deck(deck, increment = 0, init_draw = False):

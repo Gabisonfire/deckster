@@ -12,10 +12,6 @@ valid_buttons = [
     "timer_toggle"
 ]
 
-valid_receivers = [
-    "label"
-]
-
 class Key:
     def __init__(self, json_key):
         # Required
@@ -36,14 +32,6 @@ class Key:
                 self.interval = json_key["interval"]
 
         # Optional
-        if "receiver" in json_key:
-            if json_key["receiver"] in valid_receivers:
-                self.receiver = json_key["receiver"]
-            else:
-                raise Exception(f"Invalid receiver: '{json_key['receiver']}'")
-        else:
-            self.receiver = None
-
         if "font_size" in json_key:
             self.font_size = json_key["font_size"]
         else:
@@ -101,11 +89,11 @@ class Key:
         print(f"Scheduling job({self.key}{self.page}), is paused: {paused}")
 
     def write_state(self):
-        print(f"Writing state for {self.key}:{self.toggle_state}")
+        print(f"Writing state for key {self.key} -> {self.toggle_state}")
         configs.write_key_config(self.key , self.page, "toggle_state", self.toggle_state)
 
     def update_label(self):
-        print(f"Writing state for {self.key}:{self.label}")
+        print(f"Writing label for key {self.key} -> {self.label}")
         configs.write_key_config(self.key , self.page, "label", self.label)
 
     def toggle(self):

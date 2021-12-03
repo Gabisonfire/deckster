@@ -54,7 +54,7 @@ setuptools.setup(
         "Operating System :: Unix",
         "Topic :: Communications :: File Sharing",
     ],
-    install_requires=["playsound==1.3.0", "Pillow==8.3.2", "requests==2.23.0", "streamdeck==0.8.5", "apscheduler==3.8.1"],
+    install_requires=["playsound==1.3.0", "Pillow==8.3.2", "requests==2.23.0", "streamdeck==0.8.5", "apscheduler==3.8.1", "pyyaml==21.8.3"],
     cmdclass={
         'install': PostInstallCommand
     },

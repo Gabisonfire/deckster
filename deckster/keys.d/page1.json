@@ -29,16 +29,20 @@
     "page": 1,
     "plugin": "builtins.web.get",
     "args": {
-      "url": "http://worldtimeapi.org/api/timezone/America/Toronto"
+      "url": "http://worldtimeapi.org/api/timezone/America/Toronto",
+      "status_codes": [
+        200,
+        201
+      ],
+      "json_parse": "day_of_week"
     },
-    "receiver": "label",
     "icon_default": "@hide",
     "icon_pressed": "@hide",
-    "label": "1638483266",
+    "label": "potate",
     "font": "Roboto-Regular.ttf",
     "label_offset": 25,
-    "font_size": 14,
-    "button_type": "timer_on",
+    "font_size": 8,
+    "button_type": "push",
     "toggle_state": false,
     "interval": 2
   },
