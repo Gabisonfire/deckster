@@ -7,7 +7,7 @@
 - doc -> general, plugin dev -> from deckster import update_key_image if refresh needed
 - pip package
 - github action
-- two labels (label and display)
+
 
 
 
@@ -43,3 +43,4 @@ button_type:
 - debug logging
 - set brightness in config
 - error handling
+- two labels (label and display) -> @display

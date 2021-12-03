@@ -60,10 +60,12 @@
         "hi mom"
       ]
     },
-    "icon_default": "@hide",
-    "icon_pressed": "@hide",
+    "icon_default": "@display",
+    "icon_pressed": "@display",
     "label": "shell",
-    "label_ext": "this",
+    "display": "000",
+    "display_color": "green",
+    "display_size": 36,
     "font": "Roboto-Regular.ttf",
     "button_type": "timer_toggle",
     "interval": 10,

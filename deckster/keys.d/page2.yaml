@@ -40,7 +40,7 @@
     status_codes:
     - 200
     - 201
-    send_to_label: true
+    send_to_display: true
     json_parse: day_of_week
   icon_default: '@hide'
   icon_pressed: '@hide'

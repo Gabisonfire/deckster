@@ -42,6 +42,11 @@ class Key:
         else:
             self.font_size = 14
 
+        if "font" in json_key:
+            self.font = json_key["font"]
+        else:
+            self.font = "Roboto-Regular.ttf"
+
         if "icon_pressed" in json_key:
             self.icon_pressed = json_key["icon_pressed"]
         else:
@@ -49,11 +54,6 @@ class Key:
 
         if "label" in json_key:
             self.label = json_key["label"]
-
-        if "font" in json_key:
-            self.font = json_key["font"]
-        else:
-            self.font = "Roboto-Regular.ttf"
 
         if "args" in json_key:
             self.args = json_key["args"]
@@ -73,10 +73,30 @@ class Key:
         else:
             self.label_offset = 5
 
-        if "label_ext" in json_key:
-            self.label_ext = json_key["label_ext"]
+        if "display" in json_key:
+            self.display = json_key["display"]
+        else:
+            self.display = "NULL"
+        
+        if "display_offset" in json_key:
+            self.display_offset = json_key["display_offset"]
+        else:
+            self.display_offset = 15
 
+        if "display_color" in json_key:
+            self.display_color = json_key["display_color"]
+        else:
+            self.display_color = "white"
 
+        if "display_size" in json_key:
+            self.display_size = json_key["display_size"]
+        else:
+            self.display_size = 14
+
+        if "display_font" in json_key:
+            self.display_font = json_key["display_font"]
+        else:
+            self.display_font = "Roboto-Regular.ttf"
 
     def to_json(self):
         return json.dumps(self.__dict__)

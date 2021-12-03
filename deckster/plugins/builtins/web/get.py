@@ -27,9 +27,9 @@ def main(deck, key, pressed):
 
     d = res.json()[args["json_parse"]]
     logger.info(f"Parsed result: '{d}'' from {url}")
-    if "send_to_label" in key.args:
-        if key.args["send_to_label"]:
-            logger.info(f"Sending GET result to label for key {key.key}.")
+    if "send_to_display" in key.args:
+        if key.args["send_to_display"]:
+            logger.info(f"Sending GET result to display for key {key.key}.")
             key.label = str(d)
             update_label(key)
             update_key_image(deck, key, pressed)
