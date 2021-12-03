@@ -73,6 +73,9 @@ class Key:
         else:
             self.label_offset = 5
 
+        if "label_ext" in json_key:
+            self.label_ext = json_key["label_ext"]
+
 
 
     def to_json(self):

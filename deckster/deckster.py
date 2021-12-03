@@ -43,16 +43,32 @@ def render_key_image(deck, icon_filename, key):
         image = PILHelper.create_scaled_image(deck, icon, margins=[0, 0, bottom_margin, 0])
     else:
         image = PILHelper.create_image(deck)
+
+    #
+    if icon_filename == "@hide" and hasattr(key, 'label_ext'):
+        image2 = PILHelper.create_image(deck)
+        image = image.resize((image.width, int(image.height * 0.75)))
+        image2 = image2.resize((image.width, int(image.height * 0.25)))
+        draw2 = ImageDraw.Draw(image2)
     
     draw = ImageDraw.Draw(image)
     font = ImageFont.truetype(key.font, key.font_size)
     actual_text = "" if key.label == "@hide" else key.label
+
+    #
+    if icon_filename == "@hide" and hasattr(key, 'label_ext'):
+        print("here")
+        draw2.text((image2.width / 2, image2.height - key.label_offset), text=key.label_ext, font=font, anchor="ms", fill=key.label_color)
+
     logger.debug(f"Label set for:{key.key} to '{actual_text}'")
     if not key.label == "@hide" and icon_filename == "@hide":
         draw.text((image.width / 2, image.height - key.label_offset), text=actual_text, font=font, anchor="ms", fill=key.label_color)
     elif not key.label == "@hide":
         draw.text((image.width / 2, image.height - key.label_offset), text=actual_text, font=font, anchor="ms", fill=key.label_color)
     
+    if icon_filename == "@hide" and hasattr(key, 'label_ext'):
+        image.paste(image2)
+
     return PILHelper.to_native_format(deck, image)
 
 def update_key_image(deck, key, pressed, blank = False):

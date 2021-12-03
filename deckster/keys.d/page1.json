@@ -60,9 +60,10 @@
         "hi mom"
       ]
     },
-    "icon_default": "shell.png",
-    "icon_pressed": "shell.png",
+    "icon_default": "@hide",
+    "icon_pressed": "@hide",
     "label": "shell",
+    "label_ext": "this",
     "font": "Roboto-Regular.ttf",
     "button_type": "timer_toggle",
     "interval": 10,
