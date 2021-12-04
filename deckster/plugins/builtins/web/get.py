@@ -1,6 +1,6 @@
 import requests
 import logging
-from deckster import update_key_image, update_label
+from deckster.deckster import update_key_image, update_label_display
 
 def main(deck, key, pressed):
     logger = logging.getLogger("deckster")
@@ -27,9 +27,12 @@ def main(deck, key, pressed):
 
     d = res.json()[args["json_parse"]]
     logger.info(f"Parsed result: '{d}'' from {url}")
-    if "send_to_display" in key.args:
-        if key.args["send_to_display"]:
-            logger.info(f"Sending GET result to display for key {key.key}.")
-            key.label = str(d)
-            update_label(key)
+    if "send_to_display" in key.args or "send_to_label" in key.args:
+            to_label = "send_to_label" in key.args
+            logger.info(f"Sending GET result to {'label' if to_label else 'display'} for key {key.key}.")
+            if to_label:
+                key.label = str(d)
+            else:
+                key.display = str(d)
+            update_label_display(key, True if "send_to_label" in key.args else False)
             update_key_image(deck, key, pressed)

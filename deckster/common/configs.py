@@ -2,13 +2,15 @@ import json
 import os
 import yaml
 import logging
-from common.keys import Key
+from deckster.common.keys import Key
 from pathlib import Path
+
+global __version__
+__version__ = "0.1"
 
 logger = logging.getLogger("deckster")
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-dir_path = Path(dir_path).parent.parent
+dir_path = f"{str(Path.home())}/.config/deckster/"
 
 logger.debug(f"Config path set to: {dir_path}")
 
@@ -35,7 +37,7 @@ def write_config(cfg, value):
 def read_keys():
     logger.debug(f"Reading keys...")
     templist = []
-    keysdir = read_config("keys_dir")
+    keysdir = os.path.expanduser(read_config("keys_dir"))
     keyfiles = [f for f in os.listdir(keysdir) if os.path.isfile(os.path.join(keysdir, f))]
     logger.debug(f"Found keys file: {keyfiles}")
     json_keys = []
@@ -71,7 +73,7 @@ def max_page(key_list):
     return high
 
 def write_key_config(key, page, cfg, value):
-    keysdir = read_config("keys_dir")
+    keysdir = os.path.expanduser(read_config("keys_dir"))
     logger.debug(f"{keysdir} is the keys directory.")
     keyfiles = [f for f in os.listdir(keysdir) if os.path.isfile(os.path.join(keysdir, f))]
     cfg_file = None

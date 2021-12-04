@@ -38,17 +38,20 @@
         200,
         201
       ],
-      "json_parse": "day_of_week"
+      "json_parse": "day_of_week",
+      "send_to_display": true
     },
-    "icon_default": "@hide",
-    "icon_pressed": "@hide",
-    "label": "potate",
+    "icon_default": "@display",
+    "icon_pressed": "@display",
+    "label": "Day",
     "font": "Roboto-Regular.ttf",
-    "label_offset": 25,
-    "font_size": 8,
-    "button_type": "push",
+    "font_size": 14,
+    "display_size": 24,
+    "display_offset": 10,
+    "button_type": "timer_on",
     "toggle_state": false,
-    "interval": 2
+    "interval": 10,
+    "display": "5"
   },
   {
     "key": 4,

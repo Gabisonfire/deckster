@@ -1,5 +1,5 @@
 import logging
-from common.scheduler import stop_jobs
+from deckster.common.scheduler import stop_jobs
 
 logger = logging.getLogger("deckster")
 

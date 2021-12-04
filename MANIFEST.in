@@ -1,0 +1,3 @@
+include docs/*.md
+include LICENSE.txt
+include config.json

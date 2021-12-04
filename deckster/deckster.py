@@ -1,10 +1,11 @@
-import os, re, io
+import os
+import sys
 import threading
 import logging
 import importlib
 import importlib.util
-import common.configs as cfg
-from common.scheduler import toggle_job
+import deckster.common.configs as cfg
+from deckster.common.scheduler import toggle_job
 from PIL import Image, ImageDraw, ImageFont
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.ImageHelpers import PILHelper
@@ -13,28 +14,26 @@ ICONS_DIR = cfg.read_config("icons_dir")
 PLUGINS_DIR = cfg.read_config("plugins_dir")
 PLUGINS_DIR = os.path.expanduser(PLUGINS_DIR)
 PAGE = cfg.read_config("current_page")
-__version__ = re.search(r'__version__\s*=\s*[\'"]([^\'"]*)[\'"]', io.open('__init__.py', encoding='utf_8_sig').read()).group(1)
+__version__ = cfg.__version__
 
-if __name__ == "__main__":
-    logger = logging.getLogger("deckster")
-    logger.setLevel(logging.DEBUG)
-    console = logging.StreamHandler()
-    console.setLevel(cfg.read_config("loglevel").upper())
-    formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(filename)s - %(message)s', datefmt='%y-%m-%d,%H:%M:%S')
-    console.setFormatter(formatter)
-    logger.addHandler(console)
 
-    logger.debug(f"Icons path: {ICONS_DIR}")
-    logger.debug(f"Plugins path: {PLUGINS_DIR}")
-    logger.debug(f"Current page: {PAGE}")
-else:
-    logger = logging.getLogger("deckster")
+logger = logging.getLogger("deckster")
+logger.setLevel(logging.DEBUG)
+console = logging.StreamHandler(sys.stdout)
+console.setLevel(cfg.read_config("loglevel").upper())
+formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(filename)s - %(message)s', datefmt='%y-%m-%d,%H:%M:%S')
+console.setFormatter(formatter)
+logger.addHandler(console)
+logger.debug(f"Icons path: {ICONS_DIR}")
+logger.debug(f"Plugins path: {PLUGINS_DIR}")
+logger.debug(f"Current page: {PAGE}")
+
 
 def render_key_image(deck, icon_filename, key):
     logger.debug(f"Rendering image for key:{key.key} with {icon_filename}")
     bottom_margin = 0 if key.label == "@hide" else 20
     if not icon_filename == "@hide" and not icon_filename == "@display":
-        path = os.path.join(ICONS_DIR, icon_filename)
+        path = os.path.expanduser(os.path.join(ICONS_DIR, icon_filename))
         if os.path.isfile(path):
             icon = Image.open(path)
         else:
@@ -130,7 +129,7 @@ def handle_button_action(deck, key, pressed):
     if pressed:
         if key.plugin.startswith("builtins."):
             logger.debug(f"Importing builtin plugin 'plugins.{key.plugin}'")
-            plugin = importlib.import_module(f"plugins.{key.plugin}", None)
+            plugin = importlib.import_module(f"deckster.plugins.{key.plugin}", None)
         else:
             path =  os.path.join(PLUGINS_DIR, key.plugin.replace(".", "/") + ".py")
             if os.path.isfile(path):
@@ -172,9 +171,9 @@ def change_page(increment):
     logger.debug(f"Changing to page {PAGE}/{max}")
     cfg.write_config("current_page", PAGE)
 
-def update_label(key):
-    logger.debug(f"Writing label for key {key.key} -> {key.label}")
-    cfg.write_key_config(key.key , key.page, "label", key.label)
+def update_label_display(key, label=False):
+    logger.debug(f"Writing {'label' if label  else 'display'} for key {key.key} -> {key.label if label else key.display}")
+    cfg.write_key_config(key.key , key.page, 'label' if label else 'display', key.label if label else key.display)
 
 def update_key_state(key):
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)

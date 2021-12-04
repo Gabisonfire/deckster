@@ -3,7 +3,7 @@ import importlib
 import importlib.util
 import logging
 import os
-from common import scheduler
+from deckster.common import scheduler
 
 
 logger = logging.getLogger("deckster")
@@ -110,7 +110,7 @@ class Key:
             paused = True
         if self.plugin.startswith("builtins."):
             logger.debug(f"Importing builtin plugin 'plugins.{self.plugin}'")
-            plugin = importlib.import_module(f"plugins.{self.plugin}", None)
+            plugin = importlib.import_module(f"deckster.plugins.{self.plugin}", None)
         else:           
            spec = importlib.util.spec_from_file_location(self.plugin.split(".")[-1], os.path.join(plugin_dir, self.plugin.replace(".", "/") + ".py"))
            plugin = importlib.util.module_from_spec(spec)
