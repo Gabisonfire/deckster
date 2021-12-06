@@ -6,7 +6,7 @@ from deckster.common.keys import Key
 from pathlib import Path
 
 global __version__
-__version__ = "0.1"
+__version__ = "0.1.0"
 
 logger = logging.getLogger("deckster")
 
