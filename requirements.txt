@@ -1,4 +1,4 @@
-mdx_truly_sane_lists==3.3.4
+mdx_truly_sane_lists==1.2
 Pillow==8.3.2
 streamdeck==0.8.5 
 apscheduler==3.8.1
