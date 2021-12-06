@@ -1,4 +1,4 @@
-# Key Configuration
+## Key Configuration
 
 Keys are configured by referencing their numbers starting from 0, left to right. Keys are loaded from the `keys_dir` directory ([see install](install.md)) and can be in either JSON or YAML format. Examples can be found in the repository under `keys.d`.
 

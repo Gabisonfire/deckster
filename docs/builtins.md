@@ -1,14 +1,12 @@
 # Builtins
-
+---
 ## exit
-----
 Stops all jobs and puts the deck in "standby".
 
 - reference: `builtins.exit`
 - args: None
-
-## play
 ---
+## play
 Plays a sound file.
 
 - reference: `builtins.play`
@@ -26,17 +24,16 @@ Example:
   },
   "icon_default": "sound.png",
   "label": "Play",
-  "font": "Roboto-Regular.ttf",
   "button_type": "push"
 }
 ```
-## shell
 ---
+## shell
 Executes a shell command
 
 - reference: `builtins.shell`
 - args:
-  - `command`: An array of command and arguments to execute
+  - `command` (array of string): An array of command and arguments to execute
 
 Example:
 ```json
@@ -55,9 +52,8 @@ Example:
     "button_type": "push"
   },
 ```
-# page
-## next
 ---
+## page.next
 Switches to the next page on the deck.
 
 - reference: `builtins.page.next`
@@ -71,12 +67,11 @@ Example:
     "plugin": "builtins.page.next",
     "icon_default": "next.png",
     "label": "next",
-    "button_type": "push",
+    "button_type": "push"
   }
 ```
-
-## previous
 ---
+## page.previous
 Switches to the previous page on the deck.
 
 - reference: `builtins.page.previous`
@@ -90,9 +85,81 @@ Example:
     "plugin": "builtins.page.previous",
     "icon_default": "previous.png",
     "label": "previous",
-    "button_type": "push",
+    "button_type": "push"
   }
 ```
+---
+## web.get
+Makes a GET request
 
-# web
-## get
+- reference: `builtins.web.get`
+- args:
+  - `url`(string): The url
+  - `status_codes`(array of int): Expected status codes to process the request
+  - `json_parse` (string): The key to parse from the returned JSON. Currently supports only one level.
+  - `json_data`(json): optional, JSON body of the request
+  - `headers` (json): optional, Headers to apply to the request
+  - `send_to_label` (bool): optional, sends the result to the key's label.
+  - `send_to_display` (bool): optional, sends the result to the key's display.
+
+Example:
+```json
+  {
+    "key": 3,
+    "page": 1,
+    "plugin": "builtins.web.get",
+    "args": {
+      "url": "http://worldtimeapi.org/api/timezone/America/Toronto",
+      "status_codes": [
+        200,
+        201
+      ],
+      "json_parse": "day_of_week",
+      "send_to_display": true
+    },
+    "icon_default": "@display",
+    "icon_pressed": "@display",
+    "label": "Day",
+    "font_size": 14,
+    "display_size": 24,
+    "display_offset": 10,
+    "button_type": "timer_on",
+    "interval": 10
+  },
+```
+---
+## web.post
+Makes a post request.
+
+- reference: `builtins.web.post`
+- args:
+  - `url`(string): The url
+  - `json_data`(json): JSON body of the request
+  - `headers` (json): Headers to apply to the request
+  - `status_codes`(array of int): Expected status codes to process the request
+
+```json
+  {
+    "key": 0,
+    "page": 1,
+    "plugin": "builtins.web.post",
+    "args": {
+      "url": "https://home-assistant.com/api/services/light/toggle",
+      "headers": {
+        "Content-type": "application/json",
+        "Authorization": "Bearer ABCDEFG12345"
+      },
+      "json_data": {
+        "entity_id": "light.light_strip"
+      },
+      "status_codes": [
+        200,
+        201
+      ]
+    },
+    "icon_default": "light.png",
+    "label": "Light on",
+    "label_color": "green",
+    "button_type": "push_toggle"
+  },
+```

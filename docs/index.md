@@ -18,7 +18,7 @@ A service to manage your Streamdeck easily on Linux
 
 ### **Quickstart**
 - `pip install deckster-sd`
-- Confirm the directories in `~/config.json`
+- Confirm the directories configuration in `~/config.json`
 - Edit your keys in the defined `keys_dir`
 - Run `deckster`
 
@@ -27,4 +27,6 @@ A service to manage your Streamdeck easily on Linux
 - [Configuration](config.md)
 - [Builtin Plugins](builtins.md)
 - [Custom Plugins](plugins.md)
+
+Built with [Dean Camera](https://github.com/abcminiuser/)'s awesome [Streamdeck](https://pypi.org/project/streamdeck/) library.
 

@@ -25,3 +25,12 @@ The install process will create a default `config.json` to your /`home`/`.config
 | keys_dir | The directory where your key configurations are stored | ~/deckster/keys.d | A directory |
 | loglevel | The log level to output | info | debug, info, warning, error, critical  |
 | brightness | The global brightness of your deck | 100 | integer between 1-100 |
+<br/>
+
+# Service
+You can have deckster run as a service by using the service file template in the repository. Replace "myusername" with your linux user and then run:
+```bash
+sudo cp deckster.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl start deckster
+```
