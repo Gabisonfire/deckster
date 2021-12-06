@@ -2,6 +2,17 @@
 ### A service to manage your Streamdeck easily on Linux
 ---
 
+## Documentation
+
+[Online](https://deckster-sd.readthedocs.io/en/latest/)
+
+Offline:
+```bash
+pip install mkdocs
+mkdocs serve
+```
+Then navigate to http://localhost:8000
+
 ## Quickstart
 ```
 pip install deckster-sd
