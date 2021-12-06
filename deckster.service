@@ -1,0 +1,12 @@
+[Unit]
+Description=Deckster
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=never
+ExecStart=/home/myusername/.local/bin/deckster
+User=myusername
+
+[Install]
+WantedBy=multi-user.target
