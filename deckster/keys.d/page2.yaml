@@ -2,7 +2,7 @@
   page: 2
   plugin: builtins.play
   args:
-    sound: /home/gabisonfire/Documents/streamdeck/Assets/horn.mp3
+    sound: ~/Documents/streamdeck/Assets/horn.mp3
   icon_default: sound.png
   icon_pressed: sound_pressed.png
   label: horn

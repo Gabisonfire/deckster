@@ -4,13 +4,13 @@
     "page": 1,
     "plugin": "builtins.web.post",
     "args": {
-      "url": "http://homea.luna.net/api/services/light/toggle",
+      "url": "http://home-assistant/api/services/light/toggle",
       "headers": {
         "Content-type": "application/json",
-        "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmNGViMWQwMWZkOTM0MDVkOTI3MGE5Y2EwODg4ZmE4NSIsImlhdCI6MTYzNzcxNzUyNSwiZXhwIjoxOTUzMDc3NTI1fQ.irk1coPGoiKEo49gZMAq67-diiqFJRcra7gweixR2oU"
+        "Authorization": "Bearer ABCDEEFG123456"
       },
       "json_data": {
-        "entity_id": "light.elgato_light_strip"
+        "entity_id": "light.light_strip"
       },
       "status_codes": [
         200,
