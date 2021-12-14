@@ -4,8 +4,10 @@ import threading
 import logging
 import importlib
 import importlib.util
+import signal
 import deckster.common.configs as cfg
-from deckster.common.scheduler import toggle_job
+from deckster.generators import generators
+from deckster.common.scheduler import toggle_job, stop_jobs
 from PIL import Image, ImageDraw, ImageFont
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.ImageHelpers import PILHelper
@@ -179,26 +181,35 @@ def update_key_state(key):
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)
 
 def main():
+    
     logger.info(f"Deckster v{__version__}")
     logger.info(f"Initializing...")
     streamdecks = DeviceManager().enumerate()
-    for index, deck in enumerate(streamdecks):
-        deck.open()
-        deck.reset()
+    deck = streamdecks[0]
 
-        logger.debug(f"Opened '{deck.deck_type()}' device (serial number: '{deck.get_serial_number()}')")
-        deck.set_brightness(cfg.read_config("brightness"))
-
-        draw_deck(deck, init_draw=True)
-
-        deck.set_key_callback(key_change_callback)
-
-        logger.info(f"Ready.")
-        for t in threading.enumerate():
-            if t is threading.currentThread():
-                continue
-            if t.is_alive():
-                t.join()
+    def graceful_shutdown(sig, frame):
+        stop_jobs()
+        logger.info("Bye")
+        with deck:
+            deck.reset()
+            deck.close()
+        sys.exit(0)
+        
+    generators.execute_generators()
+    #for index, deck in enumerate(streamdecks):
+    deck.open()
+    deck.reset()
+    signal.signal(signal.SIGINT, graceful_shutdown)
+    logger.debug(f"Opened '{deck.deck_type()}' device (serial number: '{deck.get_serial_number()}')")
+    deck.set_brightness(cfg.read_config("brightness"))
+    draw_deck(deck, init_draw=True)
+    deck.set_key_callback(key_change_callback)
+    logger.info(f"Ready.")
+    for t in threading.enumerate():
+        if t is threading.currentThread():
+            continue
+        if t.is_alive():
+            t.join()
 
 if __name__ == "__main__":    
     main()
