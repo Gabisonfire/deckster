@@ -27,6 +27,7 @@ A service to manage your Streamdeck easily on Linux
 - [Configuration](config.md)
 - [Builtin Plugins](builtins.md)
 - [Custom Plugins](plugins.md)
+- [Changelog](changelog.md)
 
 Built with [Dean Camera](https://github.com/abcminiuser/)'s awesome [Streamdeck](https://pypi.org/project/streamdeck/) library.
 

@@ -109,14 +109,14 @@ def write_key_config(key, page, cfg, value):
     else:
         logger.error(f"Could not find a match for key {key} on page {page}.")
 
-def empty_set(key_count):
+def empty_set(key_count, page):
     ks = []
     for k in range(key_count):
         x = {
             "key": k,
-            "page": 1,
-            "plugin": "builtins.web.post",
-            "icon_default": "web.png",
+            "page": page,
+            "plugin": "empty",
+            "icon_default": "empty",
             "button_type": "toggle"
         }
         ks.append(Key(x))

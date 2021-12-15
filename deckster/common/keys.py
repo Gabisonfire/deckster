@@ -20,7 +20,8 @@ class Key:
     def __init__(self, json_key):
         # Required
         self.key = json_key["key"]
-        logger.debug(f"Instantiating key {self.key}: {json_key}")
+        if not json_key["plugin"] == "empty":
+            logger.debug(f"Instantiating key {self.key}: {json_key}")
         self.page = json_key["page"]
         self.icon_default = json_key["icon_default"]
         self.plugin = json_key["plugin"]

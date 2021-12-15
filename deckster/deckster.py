@@ -76,7 +76,8 @@ def render_key_image(deck, icon_filename, key):
     return PILHelper.to_native_format(deck, final_image)
 
 def update_key_image(deck, key, pressed, blank = False):
-    logger.debug(f"Updating image for key:{key.key}")
+    if not key.plugin == "empty":
+        logger.debug(f"Updating image for key:{key.key}")
     icon = handle_button_icon(key, pressed)
     if key.page == PAGE or blank:
         if not blank:
@@ -87,7 +88,8 @@ def update_key_image(deck, key, pressed, blank = False):
             deck.set_key_image(key.key, image)
 
 def handle_button_icon(key, pressed):
-    logger.debug(f"Handling icon state for key:{key.key} -> '{'pressed' if pressed else 'released'}'")
+    if not key.plugin == "empty":
+        logger.debug(f"Handling icon state for key:{key.key} -> '{'pressed' if pressed else 'released'}'")
     # If button is a toggle and is pressed, store new state.
     if (key.button_type == "toggle" or key.button_type == "timer_toggle") and pressed:
         key.toggle()
@@ -147,22 +149,22 @@ def handle_button_action(deck, key, pressed):
 def draw_deck(deck, increment = 0, init_draw = False):
     logger.debug(f"Drawing deck. {'INIT' if init_draw else ''}")
     clear(deck)
-    change_page(increment)
+    if not init_draw:
+        change_page(increment)
     for k in cfg.read_keys():
         if k.button_type.startswith("timer") and init_draw:
             k.schedule_timer(deck, cfg.read_config("plugin_dir"))
         update_key_image(deck, k, False)
          
 
-def clear(deck):
+def clear(deck, page = 1):
     logger.debug(f"Clearing deck.")
-    keys = cfg.empty_set(deck.key_count())
+    keys = cfg.empty_set(deck.key_count(), page)
     for k in keys:
         update_key_image(deck, k, False, True)
 
 def change_page(increment):
     max = cfg.max_page(cfg.read_keys())
-    logger.debug(f"Changing to page")
     global PAGE
     if PAGE + increment > max:
         PAGE = 1
