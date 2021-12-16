@@ -32,7 +32,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     python_requires=">=3.9",
     include_package_data=True,
-    packages=["deckster", "deckster.common", "deckster.plugins.builtins", "deckster.plugins.builtins.page", "deckster.plugins.builtins.web"],
+    packages=["deckster", "deckster.generators", "deckster.generators.builtins", "deckster.common", "deckster.plugins.builtins", "deckster.plugins.builtins.page", "deckster.plugins.builtins.web"],
     entry_points = {
         "console_scripts": ['deckster = deckster.deckster:main']
         },

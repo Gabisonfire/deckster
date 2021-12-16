@@ -20,7 +20,8 @@ class Key:
     def __init__(self, json_key):
         # Required
         self.key = json_key["key"]
-        logger.debug(f"Instantiating key {self.key}: {json_key}")
+        if not json_key["plugin"] == "empty":
+            logger.debug(f"Instantiating key {self.key}: {json_key}")
         self.page = json_key["page"]
         self.icon_default = json_key["icon_default"]
         self.plugin = json_key["plugin"]
@@ -37,6 +38,16 @@ class Key:
                 self.interval = json_key["interval"]
 
         # Optional
+        if "label_truncate" in json_key:
+            self.label_truncate = json_key["label_truncate"]
+        else:
+            self.label_truncate = -1
+
+        if "padding" in json_key:
+            self.padding = json_key["padding"]
+        else:
+            self.padding = [0,0,0,0]
+        
         if "font_size" in json_key:
             self.font_size = json_key["font_size"]
         else:

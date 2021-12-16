@@ -4,8 +4,11 @@ import threading
 import logging
 import importlib
 import importlib.util
+import signal
+import time
 import deckster.common.configs as cfg
-from deckster.common.scheduler import toggle_job
+from deckster.generators import generators
+from deckster.common.scheduler import toggle_job, stop_jobs
 from PIL import Image, ImageDraw, ImageFont
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.ImageHelpers import PILHelper
@@ -39,7 +42,7 @@ def render_key_image(deck, icon_filename, key):
         else:
             logger.error(f"File '{path}' does not exist.")
             raise FileNotFoundError(f"File '{path}' does not exist.")
-        image = PILHelper.create_scaled_image(deck, icon, margins=[0, 0, bottom_margin, 0])
+        image = PILHelper.create_scaled_image(deck, icon, margins=[0 + key.padding[0], 0 + key.padding[1], bottom_margin + key.padding[2], 0 + key.padding[3]])
     else:
         image = PILHelper.create_image(deck)
 
@@ -55,6 +58,8 @@ def render_key_image(deck, icon_filename, key):
     
     draw = ImageDraw.Draw(image)
     font = ImageFont.truetype(key.font, key.font_size)
+    if key.label_truncate > 0:
+            key.label = key.label[0:key.label_truncate]
     actual_text = "" if key.label == "@hide" else key.label
 
     logger.debug(f"Label set for:{key.key} to '{actual_text}'")
@@ -74,7 +79,8 @@ def render_key_image(deck, icon_filename, key):
     return PILHelper.to_native_format(deck, final_image)
 
 def update_key_image(deck, key, pressed, blank = False):
-    logger.debug(f"Updating image for key:{key.key}")
+    if not key.plugin == "empty":
+        logger.debug(f"Updating image for key:{key.key}")
     icon = handle_button_icon(key, pressed)
     if key.page == PAGE or blank:
         if not blank:
@@ -85,7 +91,8 @@ def update_key_image(deck, key, pressed, blank = False):
             deck.set_key_image(key.key, image)
 
 def handle_button_icon(key, pressed):
-    logger.debug(f"Handling icon state for key:{key.key} -> '{'pressed' if pressed else 'released'}'")
+    if not key.plugin == "empty":
+        logger.debug(f"Handling icon state for key:{key.key} -> '{'pressed' if pressed else 'released'}'")
     # If button is a toggle and is pressed, store new state.
     if (key.button_type == "toggle" or key.button_type == "timer_toggle") and pressed:
         key.toggle()
@@ -145,22 +152,22 @@ def handle_button_action(deck, key, pressed):
 def draw_deck(deck, increment = 0, init_draw = False):
     logger.debug(f"Drawing deck. {'INIT' if init_draw else ''}")
     clear(deck)
-    change_page(increment)
+    if not init_draw:
+        change_page(increment)
     for k in cfg.read_keys():
         if k.button_type.startswith("timer") and init_draw:
             k.schedule_timer(deck, cfg.read_config("plugin_dir"))
         update_key_image(deck, k, False)
          
 
-def clear(deck):
+def clear(deck, page = 1):
     logger.debug(f"Clearing deck.")
-    keys = cfg.empty_set(deck.key_count())
+    keys = cfg.empty_set(deck.key_count(), page)
     for k in keys:
         update_key_image(deck, k, False, True)
 
 def change_page(increment):
     max = cfg.max_page(cfg.read_keys())
-    logger.debug(f"Changing to page")
     global PAGE
     if PAGE + increment > max:
         PAGE = 1
@@ -179,26 +186,40 @@ def update_key_state(key):
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)
 
 def main():
+    
     logger.info(f"Deckster v{__version__}")
     logger.info(f"Initializing...")
     streamdecks = DeviceManager().enumerate()
-    for index, deck in enumerate(streamdecks):
-        deck.open()
-        deck.reset()
+    while len(streamdecks) == 0:        
+        logger.info("No Stream Deck found, retrying in 10 seconds.")
+        time.sleep(10)
+        streamdecks = DeviceManager().enumerate()
+    deck = streamdecks[0]
 
-        logger.debug(f"Opened '{deck.deck_type()}' device (serial number: '{deck.get_serial_number()}')")
-        deck.set_brightness(cfg.read_config("brightness"))
+    def graceful_shutdown(sig, frame):
+        stop_jobs()
+        logger.info("Bye")
+        with deck:
+            deck.reset()
+            deck.close()
+        sys.exit(0)
 
-        draw_deck(deck, init_draw=True)
-
-        deck.set_key_callback(key_change_callback)
-
-        logger.info(f"Ready.")
-        for t in threading.enumerate():
-            if t is threading.currentThread():
-                continue
-            if t.is_alive():
-                t.join()
+    cfg.write_config("max_keys", deck.key_count())        
+    generators.execute_generators()
+    #for index, deck in enumerate(streamdecks):
+    deck.open()
+    deck.reset()
+    signal.signal(signal.SIGINT, graceful_shutdown)
+    logger.debug(f"Opened '{deck.deck_type()}' device (serial number: '{deck.get_serial_number()}')")
+    deck.set_brightness(cfg.read_config("brightness"))
+    draw_deck(deck, init_draw=True)
+    deck.set_key_callback(key_change_callback)
+    logger.info(f"Ready.")
+    for t in threading.enumerate():
+        if t is threading.currentThread():
+            continue
+        if t.is_alive():
+            t.join()
 
 if __name__ == "__main__":    
     main()
