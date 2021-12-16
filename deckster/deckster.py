@@ -5,6 +5,7 @@ import logging
 import importlib
 import importlib.util
 import signal
+import time
 import deckster.common.configs as cfg
 from deckster.generators import generators
 from deckster.common.scheduler import toggle_job, stop_jobs
@@ -41,7 +42,7 @@ def render_key_image(deck, icon_filename, key):
         else:
             logger.error(f"File '{path}' does not exist.")
             raise FileNotFoundError(f"File '{path}' does not exist.")
-        image = PILHelper.create_scaled_image(deck, icon, margins=[0, 0, bottom_margin, 0])
+        image = PILHelper.create_scaled_image(deck, icon, margins=[0 + key.padding[0], 0 + key.padding[1], bottom_margin + key.padding[2], 0 + key.padding[3]])
     else:
         image = PILHelper.create_image(deck)
 
@@ -57,6 +58,8 @@ def render_key_image(deck, icon_filename, key):
     
     draw = ImageDraw.Draw(image)
     font = ImageFont.truetype(key.font, key.font_size)
+    if key.label_truncate > 0:
+            key.label = key.label[0:key.label_truncate]
     actual_text = "" if key.label == "@hide" else key.label
 
     logger.debug(f"Label set for:{key.key} to '{actual_text}'")
@@ -187,6 +190,10 @@ def main():
     logger.info(f"Deckster v{__version__}")
     logger.info(f"Initializing...")
     streamdecks = DeviceManager().enumerate()
+    while len(streamdecks) == 0:        
+        logger.info("No Stream Deck found, retrying in 10 seconds.")
+        time.sleep(10)
+        streamdecks = DeviceManager().enumerate()
     deck = streamdecks[0]
 
     def graceful_shutdown(sig, frame):

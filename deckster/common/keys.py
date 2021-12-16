@@ -38,6 +38,16 @@ class Key:
                 self.interval = json_key["interval"]
 
         # Optional
+        if "label_truncate" in json_key:
+            self.label_truncate = json_key["label_truncate"]
+        else:
+            self.label_truncate = -1
+
+        if "padding" in json_key:
+            self.padding = json_key["padding"]
+        else:
+            self.padding = [0,0,0,0]
+        
         if "font_size" in json_key:
             self.font_size = json_key["font_size"]
         else:

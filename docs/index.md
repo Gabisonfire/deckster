@@ -15,6 +15,8 @@ A service to manage your Streamdeck easily on Linux
   - Execute a shell command
 - Customizable labels
 - Use icons or text
+- Builtin key generators for:
+  - Steam
 
 ### **Quickstart**
 - `pip install deckster-sd`
@@ -25,11 +27,18 @@ A service to manage your Streamdeck easily on Linux
 ### **Documentation**
 - [Installation](install.md)
 - [Configuration](config.md)
-- [Builtin Plugins](builtins.md)
-- [Custom Plugins](plugins.md)
+- [Builtin Plugins](plugins.md)
+- [Custom Plugins](custom_plugins.md)
 - [Builting Generators](generators.md)
 - [Custom Generators](custom_generators.md)
 - [Changelog](changelog.md)
 
 Built with [Dean Camera](https://github.com/abcminiuser/)'s awesome [Streamdeck](https://pypi.org/project/streamdeck/) library.
 
+### **Future improvements**
+- Install plugins from CLI
+- 2nd function for keys (like double-tap), to save space for navigation
+- Regex filtering
+- Steam Generator:
+  - Overflow games to next page
+  - Refresh games without restarting deck

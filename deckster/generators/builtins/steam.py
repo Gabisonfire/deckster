@@ -85,7 +85,9 @@ def write_keyfile(args, final_apps):
     previous = None
     add_navigation = False
     font = "Roboto-Regular.ttf"
+    padding = [0,0,0,0]
     hide_label = False
+    label_truncate = -1
     if "start" in args:
         start = args["start"]
     if "limit" in args:
@@ -96,6 +98,10 @@ def write_keyfile(args, final_apps):
         font = args["font"]
     if "add_navigation" in args:
         add_navigation = args["add_navigation"]
+    if "padding" in args:
+        padding = args["padding"]
+    if "label_truncate" in args:
+        label_truncate = args["label_truncate"]
 
     if add_navigation:
         next = {
@@ -105,7 +111,9 @@ def write_keyfile(args, final_apps):
             "icon_default":args["next_icon"],
             "label" : f"{'@hide' if hide_label else 'Next'}",
             "font": font,
-            "button_type": "push"
+            "button_type": "push",
+            "padding": padding,
+            "label_truncate": label_truncate
         }
         previous = {
             "key": args["previous_key"],
@@ -114,7 +122,9 @@ def write_keyfile(args, final_apps):
             "icon_default":args["previous_icon"],
             "label" : f"{'@hide' if hide_label else 'Previous'}",
             "font": font,
-            "button_type": "push"
+            "button_type": "push",
+            "padding": padding,
+            "label_truncate": label_truncate
         }
 
     app_index = 0
@@ -144,7 +154,9 @@ def write_keyfile(args, final_apps):
             "icon_default": f"{final_apps[app_index].appid}.png",
             "label" : f"{'@hide' if hide_label else final_apps[app_index].title}",
             "font": font,
-            "button_type": "push"
+            "button_type": "push",
+            "padding": padding,
+            "label_truncate": label_truncate
         }
         keyfile.append(k)
         start+=1
@@ -186,7 +198,7 @@ def main(args):
             return
         if "overwrite" in args and args["overwrite"]:
             logger.info(f"{os.path.join(KEY_DIR, KEY_FILENAME)} already exists, overwriting.")
-            
+
     if not "page" in args:
         logger.error("The 'page' argument is required.")
         return

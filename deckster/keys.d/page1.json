@@ -26,7 +26,8 @@
     "font_size": 30,
     "button_type": "push",
     "interval": 5,
-    "toggle_state": false
+    "toggle_state": false,
+    "padding": [20,20,20,20]
   },
   {
     "key": 3,

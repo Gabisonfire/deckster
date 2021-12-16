@@ -1,90 +1,165 @@
-# Custom plugins
-Custom plugins are simply Python modules. Let's create a simple plugin that sends a random word to our label.
+# Builtins - Plugins
+---
+## exit
+Stops all jobs and puts the deck in "standby".
 
-Under your `plugins_dir` specified in your `config.json`, create a folder to hold your plugin:
-```bash
-mkdir -p ~/deckster/deckster-plugins/gabisonfire
+- reference: `builtins.exit`
+- args: None
+---
+## play
+Plays a sound file.
+
+- reference: `builtins.play`
+- args: 
+  - `sound`: Full path to a sound file.
+
+Example:
+```json
+{
+  "key": 1,
+  "page": 1,
+  "plugin": "builtins.play",
+  "args": {
+      "sound": "/path/to/file.mp3"
+  },
+  "icon_default": "sound.png",
+  "label": "Play",
+  "button_type": "push"
+}
 ```
+---
+## shell
+Executes a shell command
 
-Plugins' entry points must be a function called `main` and must receive 3 arguments: `deck`, `key`, and `pressed`.
+- reference: `builtins.shell`
+- args:
+  - `command` (array of string): An array of command and arguments to execute
 
-- `deck`: The current [deck object](https://python-elgato-streamdeck.readthedocs.io/en/stable/modules/devices.html#module-StreamDeck.Devices.StreamDeck) 
-- `key`: The `key` that triggered the event. It holds all the information in your config.
-- `pressed`: A boolean value. `true` if the button was pressed, `false` if it was released. At the moment, only `pressed` events will trigger a plugin execution.
-
-Now let's create our plugin file:
-```bash
-touch ~/deckster/deckster-plugins/gabisonfire/random.py
-```
-
-```python
-# This import is required to update the label/display of a key
-from deckster.deckster import update_key_image, update_label_display
-from random_word import RandomWords
-
-# Required function definition
-def main(deck, key, pressed):
-    # Acquire the main logger
-    logger = logging.getLogger("deckster")
-
-    # Store the arguments
-    args = key.args
-
-    # Check for submitted arguments
-    if "min" in args:
-        min = args["min"]
-    else:
-        min = 1
-
-    if "max" in args:
-        max = args["max"]
-    else:
-        max = 10
-
-    # Generate a random word using our arguments
-    rw = RandomWords()
-    aword = rw.get_random_word(min_length=min, max_length=max)
-
-    # Print the word in the "info" logs
-    logger.info(aword)
-
-    # Check if the key configuration is set to send the result to a label or display
-    if "send_to_display" in key.args or "send_to_label" in key.args:
-            to_label = "send_to_label" in key.args
-
-            # Update the display or label value
-            if to_label:
-                key.label = aword
-            else:
-                key.display = aword
-
-            # This updates the label's value on disk
-            update_label_display(key, True if "send_to_label" in key.args else False)
-
-            # This recreates an image for the key with the new values.
-            update_key_image(deck, key, pressed)
-```
-
-Now let's use that plugin in a key configuration:
+Example:
 ```json
   {
     "key": 4,
     "page": 1,
-    "plugin": "gabisonfire.random",
+    "plugin": "builtins.shell",
     "args": {
-      "min": 5,
-      "max": 10
+      "command": [
+        "ls",
+        "-l"
+      ]
     },
-    "icon_default": "random.png",
-    "label": "Random Word",
+    "icon_default": "shell.png",
+    "label": "shell",
     "button_type": "push"
   },
 ```
-That's it. When you press your "Random Word" button, the label will change into a random word.
-You can also organise plugins in subfolder and add it to the reference. Ex:
-```bash
-touch ~/deckster/deckster-plugins/gabisonfire/words/random.py
-```
+---
+## page.next
+Switches to the next page on the deck.
+
+- reference: `builtins.page.next`
+- args: None
+
+Example:
 ```json
-    "plugin": "gabisonfire.words.random",
+  {
+    "key": 14,
+    "page": 1,
+    "plugin": "builtins.page.next",
+    "icon_default": "next.png",
+    "label": "next",
+    "button_type": "push"
+  }
+```
+---
+## page.previous
+Switches to the previous page on the deck.
+
+- reference: `builtins.page.previous`
+- args: None
+
+Example:
+```json
+  {
+    "key": 10,
+    "page": 1,
+    "plugin": "builtins.page.previous",
+    "icon_default": "previous.png",
+    "label": "previous",
+    "button_type": "push"
+  }
+```
+---
+## web.get
+Makes a GET request
+
+- reference: `builtins.web.get`
+- args:
+  - `url`(string): The url
+  - `status_codes`(array of int): Expected status codes to process the request
+  - `json_parse` (string): The key to parse from the returned JSON. Currently supports only one level.
+  - `json_data`(json): optional, JSON body of the request
+  - `headers` (json): optional, Headers to apply to the request
+  - `send_to_label` (bool): optional, sends the result to the key's label.
+  - `send_to_display` (bool): optional, sends the result to the key's display.
+
+Example:
+```json
+  {
+    "key": 3,
+    "page": 1,
+    "plugin": "builtins.web.get",
+    "args": {
+      "url": "http://worldtimeapi.org/api/timezone/America/Toronto",
+      "status_codes": [
+        200,
+        201
+      ],
+      "json_parse": "day_of_week",
+      "send_to_display": true
+    },
+    "icon_default": "@display",
+    "icon_pressed": "@display",
+    "label": "Day",
+    "font_size": 14,
+    "display_size": 24,
+    "display_offset": 10,
+    "button_type": "timer_on",
+    "interval": 10
+  },
+```
+---
+## web.post
+Makes a post request.
+
+- reference: `builtins.web.post`
+- args:
+  - `url`(string): The url
+  - `json_data`(json): JSON body of the request
+  - `headers` (json): Headers to apply to the request
+  - `status_codes`(array of int): Expected status codes to process the request
+
+```json
+  {
+    "key": 0,
+    "page": 1,
+    "plugin": "builtins.web.post",
+    "args": {
+      "url": "https://home-assistant.com/api/services/light/toggle",
+      "headers": {
+        "Content-type": "application/json",
+        "Authorization": "Bearer ABCDEFG12345"
+      },
+      "json_data": {
+        "entity_id": "light.light_strip"
+      },
+      "status_codes": [
+        200,
+        201
+      ]
+    },
+    "icon_default": "light.png",
+    "label": "Light on",
+    "label_color": "green",
+    "button_type": "push_toggle"
+  },
 ```

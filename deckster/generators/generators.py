@@ -17,6 +17,7 @@ class generator:
 def init_generators():
     logger.debug("Reading generators...")
     gens = configs.read_config("generators")
+    if gens is None: return None
     active_gen = []
     for gen in gens:
         if "enabled" in gen:
@@ -27,6 +28,7 @@ def init_generators():
 
 def execute_generators():
     gens = init_generators()
+    if gens is None: return None
     for gen in gens:
         if gen.generator.startswith("builtins."):
             logger.debug(f"Starting builtin generator 'generators.{gen.generator}'")

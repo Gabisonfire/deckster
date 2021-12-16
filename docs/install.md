@@ -25,6 +25,9 @@ The install process will create a default `config.json` to your /`home`/`.config
 | keys_dir | The directory where your key configurations are stored | ~/deckster/keys.d | A directory |
 | loglevel | The log level to output | info | debug, info, warning, error, critical  |
 | brightness | The global brightness of your deck | 100 | integer between 1-100 |
+| generators_dir | The directory where your custom generators | ~/deckster/generators | A directory |
+| generators | Generator configurations array | [] | An array of configuration. See [generators](generators.md) |
+
 <br/>
 
 # Service

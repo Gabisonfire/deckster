@@ -18,11 +18,13 @@ Keys are configured by referencing their numbers starting from 0, left to right.
 | label | The text displayed in the label | | string | |
 | label_color | The color of the text displayed by the label | | Common HTML color names. | white |
 | label_offset | The offset of the label relative to the bottom. | | int | 5 |
+| label_truncate | The maximum of characters a label will display. | | int | None (-1) |
 | display | Text to display. Requires `@display` for icon. See [Special Configurations](#special-configurations) | | string | |
 | display_offset | The offset of the text relative to the top. | | int | 15 |
 | display_color | The color of the text displayed by the `display` | | Common HTML color names. | white |
 | display_size | The size of the font for key displays | | int | 14 |
 | display_font |  The font to use for displays | | An installed font | Roboto-Regular.ttf |
+| padding | The padding applied to the icon. Left, right, bottom, top | | [int,int,int,int] | [0,0,0,0] |
 | toggle_state | The state stored for `toggle` type buttons. | | true, false | Written by Deckster |
 
 ---
@@ -39,3 +41,4 @@ Keys are configured by referencing their numbers starting from 0, left to right.
 - `label`
   - `@hide`: Will hide the label.
 - `toggle_state`: This is used ny Deckster to keep the state of `toggle` type buttons. It is kept inside the configuration to allow users to manually change it if needed.
+- `padding`: When a label is shown, the bottom padding is automatically set to 20.
