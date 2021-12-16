@@ -196,7 +196,8 @@ def main():
             deck.reset()
             deck.close()
         sys.exit(0)
-        
+
+    cfg.write_config("max_keys", deck.key_count())        
     generators.execute_generators()
     #for index, deck in enumerate(streamdecks):
     deck.open()
