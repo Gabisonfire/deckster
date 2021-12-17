@@ -1,3 +1,6 @@
+# 0.3
+- Updated service file for proper user install.
+
 # 0.2
 - Proper shutdown on CTRL+C
 - Added generators

@@ -31,9 +31,11 @@ The install process will create a default `config.json` to your /`home`/`.config
 <br/>
 
 # Service
-You can have deckster run as a service by using the service file template in the repository. Replace "myusername" with your linux user and then run:
+You can have deckster run as a service by using the service file in the repository. Run:
 ```bash
-sudo cp deckster.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl start deckster
+mkdir -p $HOME/.local/share/systemd/user
+cp deckster.service $HOME/.local/share/systemd/user
+systemctl --user daemon-reload
+systemctl --user enable 
+systemctl --user start deckster
 ```
