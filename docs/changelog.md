@@ -1,8 +1,8 @@
 # 0.3
 - Updated service file for proper user install.
+- Proper SIGTERM handling
 
 # 0.2
-- Proper shutdown on CTRL+C
 - Added generators
   - Added Steam as builtin generator
 - Various code optimization

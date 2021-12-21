@@ -29,6 +29,18 @@ class App:
     def __lt__(self, other):
         return self.title < other.title
 
+class NavKey:
+    def __init__(self, args, is_next, page, hide_label, font, padding, label_truncate):
+        self.key = args["next_key"] if is_next else args["previous_key"]
+        self.page = page
+        self.plugin = "builtins.page.next"  if is_next else "builtins.page.previous"
+        self.icon_default = args["next_icon"] if is_next else args["previous_icon"]
+        self.label = f"{'@hide' if hide_label else 'Next'}" if is_next else f"{'@hide' if hide_label else 'Previous'}"
+        self.font = font
+        self.button_type = "push"
+        self.padding = padding
+        self.label_truncate = label_truncate
+
 def read_installed_apps(path):
     apps = []
     path = os.path.expanduser(path)
@@ -81,13 +93,13 @@ def write_keyfile(args, final_apps):
     keyfile = []
     start = 0
     limit = 100
-    next = None
-    previous = None
     add_navigation = False
     font = "Roboto-Regular.ttf"
     padding = [0,0,0,0]
     hide_label = False
     label_truncate = -1
+    allow_more_pages = False
+    page = args["page"]
     if "start" in args:
         start = args["start"]
     if "limit" in args:
@@ -102,48 +114,33 @@ def write_keyfile(args, final_apps):
         padding = args["padding"]
     if "label_truncate" in args:
         label_truncate = args["label_truncate"]
-
-    if add_navigation:
-        next = {
-            "key": args["next_key"],
-            "page": args["page"],
-            "plugin": "builtins.page.next",
-            "icon_default":args["next_icon"],
-            "label" : f"{'@hide' if hide_label else 'Next'}",
-            "font": font,
-            "button_type": "push",
-            "padding": padding,
-            "label_truncate": label_truncate
-        }
-        previous = {
-            "key": args["previous_key"],
-            "page": args["page"],
-            "plugin": "builtins.page.previous",
-            "icon_default":args["previous_icon"],
-            "label" : f"{'@hide' if hide_label else 'Previous'}",
-            "font": font,
-            "button_type": "push",
-            "padding": padding,
-            "label_truncate": label_truncate
-        }
+    if "allow_more_pages" in args:
+        allow_more_pages = args["allow_more_pages"]
 
     app_index = 0
     while start < limit:
         if start+1 > MAX_KEYS:
-            logger.warning(f"The limit set of '{limit}' is higher than the number of keys: {MAX_KEYS}. Stopping. ({len(final_apps) - MAX_KEYS + 2 if add_navigation else 0} hidden)")
-            break
+            if allow_more_pages:
+                logger.info(f"Maximum Keys reached for page {page}, continuing on page {page + 1}")
+                page += 1
+                start = 0
+            else:
+                logger.warning(f"The limit set of '{limit}' is higher than the number of keys: {MAX_KEYS}. Stopping. ({len(final_apps) - MAX_KEYS + 2 if add_navigation else 0} hidden)")
+                break
         if add_navigation:
             if start == args["next_key"]:
-                keyfile.append(next)
+                logger.debug(f"Adding navigation key 'next' at page {page}, position {start}.")
+                keyfile.append(NavKey(args, True, page, hide_label, font, padding, label_truncate).__dict__)
                 start+=1
                 continue
             elif start == args["previous_key"]:
-                keyfile.append(previous)
+                logger.debug(f"Adding navigation key 'previous' at page {page}, position {start}.")
+                keyfile.append(NavKey(args, False, page, hide_label, font, padding, label_truncate).__dict__)
                 start+=1
                 continue
         k = {
             "key": start,
-            "page": args["page"],
+            "page": page,
             "plugin": "builtins.shell",
             "args": {
                 "command": [
@@ -164,10 +161,12 @@ def write_keyfile(args, final_apps):
         if app_index == -1:
             logger.warning(f"The limit set of '{limit}' is higher than the number of applications found: {len(final_apps)}. Stopping.")
             # If we were not up to the navigation position, insert them here before breaking.
-            if add_navigation and start < next["key"]:
-                keyfile.append(next)
-            if add_navigation and start < previous["key"]:
-                keyfile.append(previous)
+            if add_navigation and start <= args["next_key"]:
+                logger.debug(f"Adding navigation key 'next' at page {page}, position {start} before ending loop.")
+                keyfile.append(NavKey(args, True, page, hide_label, font, padding, label_truncate).__dict__)
+            if add_navigation and start <= args["previous_key"]:
+                logger.debug(f"Adding navigation key 'previous' at page {page}, position {start} before ending loop.")
+                keyfile.append(NavKey(args, False, page, hide_label, font, padding, label_truncate).__dict__)
             break
     with open(os.path.join(KEY_DIR, KEY_FILENAME), 'w', encoding='utf-8') as f:
         json.dump(keyfile, f, ensure_ascii=False, indent=4)

@@ -6,6 +6,7 @@ import importlib
 import importlib.util
 import signal
 import time
+import argparse
 import deckster.common.configs as cfg
 from deckster.generators import generators
 from deckster.common.scheduler import toggle_job, stop_jobs
@@ -30,7 +31,6 @@ logger.addHandler(console)
 logger.debug(f"Icons path: {ICONS_DIR}")
 logger.debug(f"Plugins path: {PLUGINS_DIR}")
 logger.debug(f"Current page: {PAGE}")
-
 
 def render_key_image(deck, icon_filename, key):
     logger.debug(f"Rendering image for key:{key.key} with {icon_filename}")
@@ -186,7 +186,11 @@ def update_key_state(key):
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)
 
 def main():
-    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--kill", help="Stop deckster", action="store_true")
+    args = parser.parse_args()
+
+
     logger.info(f"Deckster v{__version__}")
     logger.info(f"Initializing...")
     streamdecks = DeviceManager().enumerate()
@@ -209,7 +213,7 @@ def main():
     #for index, deck in enumerate(streamdecks):
     deck.open()
     deck.reset()
-    signal.signal(signal.SIGINT, graceful_shutdown)
+    signal.signal(signal.SIGTERM, graceful_shutdown)
     logger.debug(f"Opened '{deck.deck_type()}' device (serial number: '{deck.get_serial_number()}')")
     deck.set_brightness(cfg.read_config("brightness"))
     draw_deck(deck, init_draw=True)
