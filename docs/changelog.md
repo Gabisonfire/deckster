@@ -1,8 +1,9 @@
 # 0.3
 - Updated service file for proper user install.
+- Proper SIGTERM handling
+- Steam generator: Automatically add pages as needed.
 
 # 0.2
-- Proper shutdown on CTRL+C
 - Added generators
   - Added Steam as builtin generator
 - Various code optimization

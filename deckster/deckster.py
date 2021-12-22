@@ -31,7 +31,6 @@ logger.debug(f"Icons path: {ICONS_DIR}")
 logger.debug(f"Plugins path: {PLUGINS_DIR}")
 logger.debug(f"Current page: {PAGE}")
 
-
 def render_key_image(deck, icon_filename, key):
     logger.debug(f"Rendering image for key:{key.key} with {icon_filename}")
     bottom_margin = 0 if key.label == "@hide" else 20
@@ -186,7 +185,6 @@ def update_key_state(key):
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)
 
 def main():
-    
     logger.info(f"Deckster v{__version__}")
     logger.info(f"Initializing...")
     streamdecks = DeviceManager().enumerate()
@@ -209,7 +207,7 @@ def main():
     #for index, deck in enumerate(streamdecks):
     deck.open()
     deck.reset()
-    signal.signal(signal.SIGINT, graceful_shutdown)
+    signal.signal(signal.SIGTERM, graceful_shutdown)
     logger.debug(f"Opened '{deck.deck_type()}' device (serial number: '{deck.get_serial_number()}')")
     deck.set_brightness(cfg.read_config("brightness"))
     draw_deck(deck, init_draw=True)

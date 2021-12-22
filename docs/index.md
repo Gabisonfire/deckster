@@ -40,5 +40,4 @@ Built with [Dean Camera](https://github.com/abcminiuser/)'s awesome [Streamdeck]
 - 2nd function for keys (like double-tap), to save space for navigation
 - Regex filtering
 - Steam Generator:
-  - Overflow games to next page
   - Refresh games without restarting deck
