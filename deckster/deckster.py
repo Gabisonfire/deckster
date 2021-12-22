@@ -6,7 +6,6 @@ import importlib
 import importlib.util
 import signal
 import time
-import argparse
 import deckster.common.configs as cfg
 from deckster.generators import generators
 from deckster.common.scheduler import toggle_job, stop_jobs
@@ -186,11 +185,6 @@ def update_key_state(key):
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--kill", help="Stop deckster", action="store_true")
-    args = parser.parse_args()
-
-
     logger.info(f"Deckster v{__version__}")
     logger.info(f"Initializing...")
     streamdecks = DeviceManager().enumerate()
