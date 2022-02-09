@@ -1,5 +1,5 @@
 mdx_truly_sane_lists==1.2
-Pillow==8.3.2
+Pillow==9.0.0
 streamdeck~=0.8
 apscheduler==3.8.1
 pyaml==21.8.3
