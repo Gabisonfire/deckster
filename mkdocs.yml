@@ -4,8 +4,9 @@ nav:
     - 'Index': 'index.md'
     - 'Installation': 'install.md'
     - 'Configuration': 'config.md'
-    - 'Builtin Plugins': 'builtins.md'
-    - 'Custom Plugins': 'plugins.md'
+    - 'Builtin Plugins': 'plugins.md'
+    - 'Custom Plugins': 'custom_plugins.md'
+    - 'Builtin Generators': 'generators.md'
     - 'Changelog': 'changelog.md'
 markdown_extensions:
   - mdx_truly_sane_lists
