@@ -7,7 +7,7 @@ from setuptools.command.install import install
 
 APP_NAME = "Deckster"
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 class PostInstallCommand(install):
     """Post-installation for installation mode."""
