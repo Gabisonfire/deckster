@@ -1,5 +1,6 @@
 import requests
 import logging
+import jq
 from deckster.deckster import update_key_image, update_label_display
 
 def main(deck, key, pressed):
@@ -25,7 +26,7 @@ def main(deck, key, pressed):
         logger.error(f"Status code returned {res.status_code} not in expected codes.")
         return
 
-    d = res.json()[args["json_parse"]]
+    d = jq.compile(args["json_parse"]).input(res.json()).first()
     logger.info(f"Parsed result: '{d}'' from {url}")
     if "send_to_display" in key.args or "send_to_label" in key.args:
             to_label = "send_to_label" in key.args
