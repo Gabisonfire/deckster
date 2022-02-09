@@ -96,7 +96,7 @@ Makes a GET request
 - args:
   - `url`(string): The url
   - `status_codes`(array of int): Expected status codes to process the request
-  - `json_parse` (string): The key to parse from the returned JSON. Currently supports only one level.
+  - `json_parse` (string): A [jq expression](https://stedolan.github.io/jq/manual/#Basicfilters) to parse the returned json
   - `json_data`(json): optional, JSON body of the request
   - `headers` (json): optional, Headers to apply to the request
   - `send_to_label` (bool): optional, sends the result to the key's label.
