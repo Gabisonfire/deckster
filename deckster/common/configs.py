@@ -1,18 +1,36 @@
 import json
 import os
+from sqlalchemy import false
 import yaml
 import logging
+import psutil
+import time
 from deckster.common.keys import Key
 from pathlib import Path
 
 global __version__
-__version__ = "0.4.2"
+__version__ = "0.5.0"
 
 logger = logging.getLogger("deckster")
 
 dir_path = f"{str(Path.home())}/.config/deckster/"
 
 logger.debug(f"Config path set to: {dir_path}")
+
+def is_open(file):
+    logger.debug("Chcking for open files...")
+    for proc in psutil.process_iter():
+        try:
+            flist = proc.open_files()
+            if flist:
+                for nt in flist:
+                    if nt.path == file:
+                        return True
+        except psutil.AccessDenied:
+            pass # Ignoring access denied errors
+        except psutil.NoSuchProcess as err:
+            logger.error(err)
+    return False
 
 def read_config(cfg):
     try:
@@ -26,11 +44,20 @@ def read_config(cfg):
             return cfg_file[k]
 
 def write_config(cfg, value):
-    with open(os.path.join(dir_path, "config.json"), "r") as cfgFile:
+    full_cfg = os.path.join(dir_path, "config.json")
+    retries = 5
+    while is_open(full_cfg) and retries > 0:
+        logger.warning(f"File is already opened, waiting. ({full_cfg})")
+        time.sleep(1)
+        retries -= 1
+    if retries == 0:
+        logger.error(f"Could not write {cfg}:{value} to {full_cfg}. Too many retries.")
+        return
+    with open(full_cfg, "r") as cfgFile:
         logger.debug(f"Reading current config")
         data = json.load(cfgFile)
         data[cfg] = value
-    with open(os.path.join(dir_path, "config.json"), "w") as cfgFile:
+    with open(full_cfg, "w") as cfgFile:
         logger.debug(f"Writing '{value}' to '{cfg}'")
         json.dump(data, cfgFile, indent=2)
 
@@ -106,6 +133,7 @@ def write_key_config(key, page, cfg, value):
                 yaml.dump(data, jsonFile, allow_unicode=True, sort_keys=False)
             else:
                 json.dump(data, jsonFile, indent=2)
+                jsonFile.truncate()
     else:
         logger.error(f"Could not find a match for key {key} on page {page}.")
 
