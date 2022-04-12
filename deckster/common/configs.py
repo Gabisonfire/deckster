@@ -18,7 +18,7 @@ dir_path = f"{str(Path.home())}/.config/deckster/"
 logger.debug(f"Config path set to: {dir_path}")
 
 def is_open(file):
-    logger.debug("Chcking for open files...")
+    logger.debug("Checking for open files...")
     for proc in psutil.process_iter():
         try:
             flist = proc.open_files()
@@ -123,6 +123,14 @@ def write_key_config(key, page, cfg, value):
                 continue
             break
     if cfg_file is not None:
+        retries = 5
+        while is_open(cfg_file) and retries > 0:
+            logger.warning(f"File is already opened, waiting. ({cfg_file})")
+            time.sleep(1)
+            retries -= 1
+        if retries == 0:
+            logger.error(f"Could not write {cfg}:{value} to {cfg_file}. Too many retries.")
+            return
         with open(os.path.join(keysdir, cfg_file), "w") as jsonFile:
             logger.debug(f"Writing modifications to {os.path.join(keysdir, cfg_file)}, Key {key}, {cfg} -> {value}")
             for x in data:
