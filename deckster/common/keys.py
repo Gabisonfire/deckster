@@ -123,7 +123,8 @@ class Key:
             logger.debug(f"Importing builtin plugin 'plugins.{self.plugin}'")
             plugin = importlib.import_module(f"deckster.plugins.{self.plugin}", None)
         else:
-            path =  os.path.join(plugin_dir, self.plugin.replace(".", "/") + ".py")
+            path = os.path.join(plugin_dir, self.plugin.replace(".", "/") + ".py")
+            path = os.path.expanduser(path)
             if os.path.isfile(path):
                 spec = importlib.util.spec_from_file_location(self.plugin.split(".")[-1], path)
                 plugin = importlib.util.module_from_spec(spec)
