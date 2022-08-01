@@ -43,7 +43,7 @@ setuptools.setup(
         "Operating System :: POSIX :: Linux",
         "Topic :: System :: Hardware",
     ],
-    install_requires=["playsound==1.3.0", "Pillow==9.0.0", "requests==2.23.0", "streamdeck==0.8.5", "apscheduler==3.8.1", "pyaml==21.8.3"],
+    install_requires=["playsound==1.3.0", "Pillow==9.0.1", "requests==2.23.0", "streamdeck==0.8.5", "apscheduler==3.8.1", "pyaml==21.8.3"],
     cmdclass={
         'install': PostInstallCommand
     },

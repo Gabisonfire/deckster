@@ -131,7 +131,7 @@ def write_key_config(key, page, cfg, value):
         if retries == 0:
             logger.error(f"Could not write {cfg}:{value} to {cfg_file}. Too many retries.")
             return
-        with open(os.path.join(keysdir, cfg_file), "w") as jsonFile:
+        with open(os.path.join(keysdir, cfg_file), "w", encoding='utf-8') as jsonFile:
             logger.debug(f"Writing modifications to {os.path.join(keysdir, cfg_file)}, Key {key}, {cfg} -> {value}")
             for x in data:
                 if x["key"] == key and x["page"] == page:
@@ -140,7 +140,7 @@ def write_key_config(key, page, cfg, value):
                 logger.debug("Converting to YAML")
                 yaml.dump(data, jsonFile, allow_unicode=True, sort_keys=False)
             else:
-                json.dump(data, jsonFile, indent=2)
+                json.dump(data, jsonFile, indent=2, ensure_ascii=False)
                 jsonFile.truncate()
     else:
         logger.error(f"Could not find a match for key {key} on page {page}.")

@@ -122,10 +122,16 @@ class Key:
         if self.plugin.startswith("builtins."):
             logger.debug(f"Importing builtin plugin 'plugins.{self.plugin}'")
             plugin = importlib.import_module(f"deckster.plugins.{self.plugin}", None)
-        else:           
-           spec = importlib.util.spec_from_file_location(self.plugin.split(".")[-1], os.path.join(plugin_dir, self.plugin.replace(".", "/") + ".py"))
-           plugin = importlib.util.module_from_spec(spec)
-           spec.loader.exec_module(plugin)
+        else:
+            path =  os.path.join(plugin_dir, self.plugin.replace(".", "/") + ".py")
+            if os.path.isfile(path):
+                spec = importlib.util.spec_from_file_location(self.plugin.split(".")[-1], path)
+                plugin = importlib.util.module_from_spec(spec)
+                logger.debug(f"Importing custom '{plugin}' from '{path}'")
+                spec.loader.exec_module(plugin)
+            else:
+                logger.error(f"File '{path}' does not exist.")
+                raise FileNotFoundError(f"File '{path}' does not exist.")
         scheduler.add_job(lambda: plugin.main(deck, self, False), self.interval, id=f"{self.key}{self.page}", paused = paused)
         logger.info(f"Scheduling job({self.key}{self.page}), is paused: {paused}")
 
