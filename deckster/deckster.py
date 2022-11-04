@@ -155,7 +155,7 @@ def draw_deck(deck, increment = 0, init_draw = False):
         change_page(increment)
     for k in cfg.read_keys():
         if k.button_type.startswith("timer") and init_draw:
-            k.schedule_timer(deck, cfg.read_config("plugin_dir"))
+            k.schedule_timer(deck, cfg.read_config("plugins_dir"))
         update_key_image(deck, k, False)
          
 
