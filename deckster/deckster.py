@@ -158,7 +158,6 @@ def draw_deck(deck, increment = 0, init_draw = False):
             k.schedule_timer(deck, cfg.read_config("plugins_dir"))
         update_key_image(deck, k, False)
          
-
 def clear(deck, page = 1):
     logger.debug(f"Clearing deck.")
     keys = cfg.empty_set(deck.key_count(), page)
