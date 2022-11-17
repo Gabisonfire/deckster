@@ -1,10 +1,9 @@
 # Installation
 
-Deckster is installed with pip. Simply run:
+Deckster is normally installed with pip.
 ```
 pip install deckster-sd
 ```
-The install process will create a default `config.json` to your /`home`/`.config`/`deckster` folder.
 
 Install dependencies and add permissions:
 ```bash
@@ -23,10 +22,13 @@ sudo tee /etc/udev/rules.d/10-streamdeck.rules << EOF
     sudo udevadm control --reload-rules
 ```
 
+The install process will create a default `config.json` to your `/home/.config/deckster` folder.
+
 ```json
 {
   "icons_dir": "~/deckster/icons",
   "plugins_dir": "~/deckster/deckster-plugins",
+  "generators_dir": "~/deckster/generators",
   "current_page": 1,
   "keys_dir": "~/deckster/keys.d",
   "loglevel": "info",

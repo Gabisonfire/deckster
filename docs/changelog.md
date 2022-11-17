@@ -1,5 +1,5 @@
 # 0.5
-- Potential fix for bad json formatting  (https://github.com/Gabisonfire/deckster/issues/4)
+- Fix for bad json formatting  (https://github.com/Gabisonfire/deckster/issues/4)
 - Updated pillow for security purposes
 - Fix custom plugins not loading on `timer_on`
 

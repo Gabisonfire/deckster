@@ -110,7 +110,7 @@ def write_key_config(key, page, cfg, value):
                 break
     if cfg_file is not None:
         with FileLock(f"{os.path.join(keysdir, cfg_file)}.lock"):
-            with open(os.path.join(keysdir, cfg_file), "r+", encoding='utf-8') as jsonFile:
+            with open(os.path.join(keysdir, cfg_file), "w+", encoding='utf-8') as jsonFile:
                 logger.debug(f"Writing modifications to {os.path.join(keysdir, cfg_file)}, Key {key}, {cfg} -> {value}")
                 for x in data:
                     if x["key"] == key and x["page"] == page:
