@@ -1,6 +1,7 @@
 {
   "icons_dir": "~/deckster/icons",
   "plugins_dir": "~/deckster/deckster-plugins",
+  "generators_dir": "~/deckster/generators",
   "current_page": 1,
   "keys_dir": "~/deckster/keys.d",
   "loglevel": "info",

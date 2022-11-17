@@ -1,12 +1,15 @@
 import json
 import os
+from sqlalchemy import false
 import yaml
 import logging
+import sys
 from deckster.common.keys import Key
 from pathlib import Path
+from filelock import FileLock
 
 global __version__
-__version__ = "0.4.3"
+__version__ = "0.5.0"
 
 logger = logging.getLogger("deckster")
 
@@ -15,25 +18,33 @@ dir_path = f"{str(Path.home())}/.config/deckster/"
 logger.debug(f"Config path set to: {dir_path}")
 
 def read_config(cfg):
-    try:
-        logger.debug(f"Reading from: {os.path.join(dir_path, 'config.json')}")
-        cfg_file = json.load(open(os.path.join(dir_path, "config.json")))
-    except Exception as e:
-        logger.error(f"{os.path.join(dir_path, 'config.json')} contains invalid JSON. ({e})")
-
-    for k in cfg_file:
-        if k == cfg:
-            return cfg_file[k]
+    full_cfg = os.path.join(dir_path, "config.json")
+    lock_path = f"{full_cfg}.lock"
+    cfg_file = None
+    with FileLock(lock_path):
+        try:
+            logger.debug(f"Reading from: {os.path.join(dir_path, 'config.json')}")
+            cfg_file = json.load(open(os.path.join(dir_path, "config.json")))
+        except Exception as e:
+            logger.error(f"{os.path.join(dir_path, 'config.json')} contains invalid JSON. ({e})")
+            sys.exit(1)
+        for k in cfg_file:
+            if k == cfg:
+                return cfg_file[k]
 
 def write_config(cfg, value):
-    with open(os.path.join(dir_path, "config.json"), "r") as cfgFile:
-        logger.debug(f"Reading current config")
-        data = json.load(cfgFile)
-        data[cfg] = value
-    with open(os.path.join(dir_path, "config.json"), "w") as cfgFile:
-        logger.debug(f"Writing '{value}' to '{cfg}'")
-        json.dump(data, cfgFile, indent=2)
+    full_cfg = os.path.join(dir_path, "config.json")
+    lock_path = f"{full_cfg}.lock"
+    with FileLock(lock_path):
+        with open(full_cfg, "r") as cfgFile:
+            logger.debug(f"Reading current config")
+            data = json.load(cfgFile)
+            data[cfg] = value
+        with open(full_cfg, "w+") as cfgFile:
+            logger.debug(f"Writing '{value}' to '{cfg}'")
+            json.dump(data, cfgFile, indent=2)
 
+# Add lock here too
 def read_keys():
     logger.debug(f"Reading keys...")
     templist = []
@@ -76,36 +87,42 @@ def write_key_config(key, page, cfg, value):
     keysdir = os.path.expanduser(read_config("keys_dir"))
     logger.debug(f"{keysdir} is the keys directory.")
     keyfiles = [f for f in os.listdir(keysdir) if os.path.isfile(os.path.join(keysdir, f))]
+    logger.debug(f"key files found: {keyfiles}")
     cfg_file = None
     for f in keyfiles:
         logger.debug(f"Parsing {f}...")
-        with open(os.path.join(keysdir, f), "r") as jsonFile:
-            if os.path.splitext(f)[1] in [".yml", ".yaml"]:
-                logger.debug(f"{f} is YAML")
-                y = yaml.safe_load(jsonFile)
-                data = json.loads(json.dumps(y))
-            else:
-                logger.debug(f"{f} is JSON")
-                data = json.load(jsonFile)
-            for x in data:
-                if x["key"] == key and x["page"] == page:
-                    logger.debug(f"Found that key {key} on page {page} belongs to {f}")
-                    cfg_file = f
-                    break
-            else:                
-                continue
-            break
+        with FileLock(f"{os.path.join(keysdir, f)}.lock"):
+            with open(os.path.join(keysdir, f), "r") as jsonFile:
+                if os.path.splitext(f)[1] in [".yml", ".yaml"]:
+                    logger.debug(f"{f} is YAML")
+                    y = yaml.safe_load(jsonFile)
+                    data = json.loads(json.dumps(y))
+                else:
+                    logger.debug(f"{f} is JSON")
+                    data = json.load(jsonFile)
+                for x in data:
+                    if x["key"] == key and x["page"] == page:
+                        logger.debug(f"Found that key {key} on page {page} belongs to {f}")
+                        cfg_file = f
+                        break
+                else:                
+                    continue
+                break
     if cfg_file is not None:
-        with open(os.path.join(keysdir, cfg_file), "w") as jsonFile:
-            logger.debug(f"Writing modifications to {os.path.join(keysdir, cfg_file)}, Key {key}, {cfg} -> {value}")
-            for x in data:
-                if x["key"] == key and x["page"] == page:
-                    x[cfg] = value
-            if os.path.splitext(os.path.join(keysdir, cfg_file))[1] in [".yml", ".yaml"]:
-                logger.debug("Converting to YAML")
-                yaml.dump(data, jsonFile, allow_unicode=True, sort_keys=False)
-            else:
-                json.dump(data, jsonFile, indent=2)
+        with FileLock(f"{os.path.join(keysdir, cfg_file)}.lock"):
+            with open(os.path.join(keysdir, cfg_file), "w+", encoding='utf-8') as jsonFile:
+                logger.debug(f"Writing modifications to {os.path.join(keysdir, cfg_file)}, Key {key}, {cfg} -> {value}")
+                for x in data:
+                    if x["key"] == key and x["page"] == page:
+                        logger.debug(f"Assigning {x[cfg]} to {value}")
+                        x[cfg] = value
+                if os.path.splitext(os.path.join(keysdir, cfg_file))[1] in [".yml", ".yaml"]:
+                    logger.debug("Converting to YAML")
+                    logger.debug(f"Writing '{data}'")
+                    yaml.dump(data, jsonFile, allow_unicode=True, sort_keys=False)
+                else:
+                    logger.debug(f"Writing '{data}'")
+                    json.dump(data, jsonFile, indent=2, ensure_ascii=False)
     else:
         logger.error(f"Could not find a match for key {key} on page {page}.")
 

@@ -11,7 +11,7 @@ Ex:
 }
 ```
 
-## steam
+## steam (WIP)
 Reads installed games and applications, retreive their title and icons and tiles them.
 
 - reference: `builtins.steam`

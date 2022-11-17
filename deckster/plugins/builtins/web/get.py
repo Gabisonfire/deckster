@@ -27,7 +27,7 @@ def main(deck, key, pressed):
         return
 
     d = jq.compile(args["json_parse"]).input(res.json()).first()
-    logger.info(f"Parsed result: '{d}'' from {url}")
+    logger.info(f"Parsed result: '{d}' from {url}")
     if "send_to_display" in key.args or "send_to_label" in key.args:
             to_label = "send_to_label" in key.args
             logger.info(f"Sending GET result to {'label' if to_label else 'display'} for key {key.key}.")
