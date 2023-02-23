@@ -1,36 +1,17 @@
 import os
-import sys
-import threading
 import logging
 import importlib
-import importlib.util
-import signal
-import time
 import deckster.common.configs as cfg
-from deckster.generators import generators
-from deckster.common.scheduler import toggle_job, stop_jobs
 from PIL import Image, ImageDraw, ImageFont
-from StreamDeck.DeviceManager import DeviceManager
+from deckster.common.scheduler import toggle_job
 from StreamDeck.ImageHelpers import PILHelper
 
 ICONS_DIR = cfg.read_config("icons_dir")
-PLUGINS_DIR = cfg.read_config("plugins_dir")
-PLUGINS_DIR = os.path.expanduser(PLUGINS_DIR)
+PLUGINS_DIR = os.path.expanduser(cfg.read_config("plugins_dir"))
 PAGE = cfg.read_config("current_page")
 __version__ = cfg.__version__
 
-
 logger = logging.getLogger("deckster")
-logger.setLevel(logging.DEBUG)
-console = logging.StreamHandler(sys.stdout)
-console.setLevel(cfg.read_config("loglevel").upper())
-formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(filename)s - %(message)s', datefmt='%y-%m-%d,%H:%M:%S')
-console.setFormatter(formatter)
-logger.addHandler(console)
-logger.debug(f"Icons path: {ICONS_DIR}")
-logger.debug(f"Plugins path: {PLUGINS_DIR}")
-logger.debug(f"Current page: {PAGE}")
-
 def render_key_image(deck, icon_filename, key):
     logger.debug(f"Rendering image for key:{key.key} with {icon_filename}")
     bottom_margin = 0 if key.label == "@hide" else 20
@@ -182,41 +163,3 @@ def update_label_display(key, label=False):
 
 def update_key_state(key):
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)
-
-def main():
-    logger.info(f"Deckster v{__version__}")
-    logger.info(f"Initializing...")
-    streamdecks = DeviceManager().enumerate()
-    while len(streamdecks) == 0:        
-        logger.info("No Stream Deck found, retrying in 10 seconds.")
-        time.sleep(10)
-        streamdecks = DeviceManager().enumerate()
-    deck = streamdecks[0]
-
-    def graceful_shutdown(sig, frame):
-        stop_jobs()
-        logger.info("Bye")
-        with deck:
-            deck.reset()
-            deck.close()
-        sys.exit(0)
-
-    cfg.write_config("max_keys", deck.key_count())        
-    generators.execute_generators()
-    #for index, deck in enumerate(streamdecks):
-    deck.open()
-    deck.reset()
-    signal.signal(signal.SIGTERM, graceful_shutdown)
-    logger.debug(f"Opened '{deck.deck_type()}' device (serial number: '{deck.get_serial_number()}')")
-    deck.set_brightness(cfg.read_config("brightness"))
-    draw_deck(deck, init_draw=True)
-    deck.set_key_callback(key_change_callback)
-    logger.info(f"Ready.")
-    for t in threading.enumerate():
-        if t is threading.currentThread():
-            continue
-        if t.is_alive():
-            t.join()
-
-if __name__ == "__main__":    
-    main()

@@ -163,3 +163,33 @@ Makes a post request.
     "button_type": "push_toggle"
   },
 ```
+---
+## homeassistant
+Interacts with the Homeassistant API
+
+- reference: `builtins.homeassistant`
+- args:
+  - `ha_base_url`(string): The base url to your homeassistant instance
+  - `domain`(string): switch, scene, light, etc
+  - `action`(string): toggle, turn_on, turn_off, etc.
+  - `entity_id`(string): The entity id
+  - `token`(string): Your HA api token
+
+```json
+  {
+    "key": 0,
+    "page": 1,
+    "plugin": "builtins.homeassistant",
+    "args": {
+      "ha_base_url": "https://home-assistant.com/api/services/light/toggle",
+      "domain": "switch",
+      "action": "toggle",
+      "entity_id": "my_ha_light",
+      "token": "asdkMTNkM2IwOTQ123MmE0NTI4321YmVkNTRjYzM1YzViasdYTJkZasd"
+    },
+    "icon_default": "light.png",
+    "label": "Light",
+    "label_color": "green",
+    "button_type": "push_toggle"
+  },
+```

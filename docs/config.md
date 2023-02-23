@@ -7,6 +7,7 @@ Keys are configured by referencing their numbers starting from 0, left to right.
 | :------------ | :---------: | :------: | :----: | :-----:
 | key | The key the config applies to | x | int from 0 to your max key ||
 | page | The page this key needs to be displayed on | x | int >= 1 ||
+| template | The template file name without extension. See [Special Configurations](#special-configurations) | | string ||
 | icon_default | The icon file to display when in "default" or "released" state. | x | Your icon filename relative to the `icons_dir` in your config. ||
 | icon_pressed | The icon file to display when in "pressed" | | Your icon filename relative to the `icons_dir` in your config. | `icon_default` |
 | plugin | The plugin to apply to this key. | x | See [builtins](builtins.md) or a [custom plugin](plugins.md) ||
@@ -42,3 +43,54 @@ Keys are configured by referencing their numbers starting from 0, left to right.
   - `@hide`: Will hide the label.
 - `toggle_state`: This is used ny Deckster to keep the state of `toggle` type buttons. It is kept inside the configuration to allow users to manually change it if needed.
 - `padding`: When a label is shown, the bottom padding is automatically set to 20.
+- `template`: A file name within the `keys_dir` with a `.tmpl` extension, containing a json object with attributes to apply to all keys referring to the template. This can considerably reduce the keys definitions. Each key will have the template's content merged.
+
+Example:
+
+style1.tmpl
+```
+  {
+    "page": 1,
+    "plugin": "builtins.web.post",
+    "args": {
+      "url": "http://someurl.example.com",
+      "headers": {
+        "Content-type": "application/json",
+        "Authorization": "78sdfhd8safh7sdhfsdhf8shd78fasdfshdfh7"
+      },
+      "status_codes": [
+        200
+      ]
+    },
+    "label_offset": 25,
+    "label_color": "green",
+    "font": "NotoSansMono-Black.ttf",
+    "font_size": 30,
+    "button_type": "push",
+    "interval": 5,
+  },
+```
+
+keys.json
+```
+  {
+    "key": 1,
+    "template": "style1",
+    "args": {
+      "json_data": {
+        "foo": "bar"
+    },
+    "icon_default": "light1.png",
+    "icon_pressed": "light2.png",
+  },
+  {
+    "key": 2,
+    "template": "style1",
+    "args": {
+      "json_data": {
+        "foo": "barbarbar"
+    },
+    "icon_default": "light3.png",
+    "icon_pressed": "light4.png",
+  },
+```

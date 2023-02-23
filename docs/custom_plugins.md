@@ -19,7 +19,7 @@ touch ~/deckster/deckster-plugins/gabisonfire/random.py
 
 ```python
 # This import is required to update the label/display of a key
-from deckster.deckster import update_key_image, update_label_display
+from deckster.common.core import update_key_image, update_label_display
 from random_word import RandomWords
 
 # Required function definition

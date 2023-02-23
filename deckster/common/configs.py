@@ -7,6 +7,7 @@ import sys
 from deckster.common.keys import Key
 from pathlib import Path
 from filelock import FileLock
+from jsonmerge import merge
 
 global __version__
 __version__ = "0.5.0"
@@ -44,12 +45,24 @@ def write_config(cfg, value):
             logger.debug(f"Writing '{value}' to '{cfg}'")
             json.dump(data, cfgFile, indent=2)
 
+def fetch_templated_key(json_key):
+    template_name = json_key["template"]
+    keysdir = os.path.expanduser(read_config("keys_dir"))
+    tmpl_files = [f for f in os.listdir(keysdir) if os.path.isfile(os.path.join(keysdir, f)) and (os.path.splitext(f)[1] in [".tmpl"])]
+    for tmpl_file in tmpl_files:
+        if os.path.splitext(tmpl_file)[0] == template_name:
+            template = json.load(open(os.path.join(keysdir, f"{template_name}.tmpl")))
+            return merge(json_key, template)
+    
+
+
 # Add lock here too
 def read_keys():
     logger.debug(f"Reading keys...")
     templist = []
     keysdir = os.path.expanduser(read_config("keys_dir"))
-    keyfiles = [f for f in os.listdir(keysdir) if os.path.isfile(os.path.join(keysdir, f))]
+    keyfiles = [f for f in os.listdir(keysdir) if os.path.isfile(os.path.join(keysdir, f)) and (os.path.splitext(f)[1] in [".yaml", ".yml", ".json"])]
+    
     logger.debug(f"Found keys file: {keyfiles}")
     json_keys = []
     for files in keyfiles:
@@ -67,6 +80,9 @@ def read_keys():
         except Exception as e:
             logger.error(f"Error parsing {os.path.join(keysdir, files)}: {e}")   
     for x in json_keys:
+        if "template" in x:
+            x = fetch_templated_key(x)
+            print(x)
         templist.append(Key(x))
     return templist
 
