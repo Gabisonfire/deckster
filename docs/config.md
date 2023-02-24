@@ -50,7 +50,6 @@ Example:
 style1.tmpl
 ```
   {
-    "page": 1,
     "plugin": "builtins.web.post",
     "args": {
       "url": "http://someurl.example.com",
@@ -74,6 +73,7 @@ style1.tmpl
 keys.json
 ```
   {
+    "page": 1,
     "key": 1,
     "template": "style1",
     "args": {
@@ -84,6 +84,7 @@ keys.json
     "icon_pressed": "light2.png",
   },
   {
+    "page": 1,
     "key": 2,
     "template": "style1",
     "args": {
@@ -94,3 +95,5 @@ keys.json
     "icon_pressed": "light4.png",
   },
 ```
+
+**Please note that `page` and `key` cannot be in a template file as they are required for key identification.**

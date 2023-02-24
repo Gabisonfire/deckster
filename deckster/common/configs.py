@@ -18,6 +18,10 @@ dir_path = f"{str(Path.home())}/.config/deckster/"
 
 logger.debug(f"Config path set to: {dir_path}")
 
+# Static variable for lock plugin
+class counter:
+    count = 0
+
 def read_config(cfg):
     full_cfg = os.path.join(dir_path, "config.json")
     lock_path = f"{full_cfg}.lock"
@@ -52,10 +56,11 @@ def fetch_templated_key(json_key):
     for tmpl_file in tmpl_files:
         if os.path.splitext(tmpl_file)[0] == template_name:
             template = json.load(open(os.path.join(keysdir, f"{template_name}.tmpl")))
-            return merge(json_key, template)
+            if "key" in template or "page" in template:
+                raise Exception("'key' and 'template' cannot be in a template file.")
+            # The order here is important as changes in second param will overwrite the first one.
+            return merge(template, json_key)
     
-
-
 # Add lock here too
 def read_keys():
     logger.debug(f"Reading keys...")

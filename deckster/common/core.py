@@ -129,13 +129,13 @@ def handle_button_action(deck, key, pressed):
                 raise FileNotFoundError(f"File '{path}' does not exist.")
         return plugin.main(deck, key, pressed)
 
-def draw_deck(deck, increment = 0, init_draw = False):
+def draw_deck(deck, increment = 0, init_draw = False, enable_scheduler = True):
     logger.debug(f"Drawing deck. {'INIT' if init_draw else ''}")
     clear(deck)
     if not init_draw:
         change_page(increment)
     for k in cfg.read_keys():
-        if k.button_type.startswith("timer") and init_draw:
+        if k.button_type.startswith("timer") and init_draw and enable_scheduler:
             k.schedule_timer(deck, cfg.read_config("plugins_dir"))
         update_key_image(deck, k, False)
          

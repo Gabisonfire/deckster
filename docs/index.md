@@ -13,8 +13,10 @@ A service to manage your Streamdeck easily on Linux
   - POST Request
   - Play audio file
   - Execute a shell command
+  - Lock streamdeck
+  - Homeassistant API
 - Customizable labels
-- Use icons or text
+- Use icons and/or text
 - Builtin key generators for:
   - Steam
 
@@ -35,9 +37,3 @@ A service to manage your Streamdeck easily on Linux
 
 Built with [Dean Camera](https://github.com/abcminiuser/)'s awesome [Streamdeck](https://pypi.org/project/streamdeck/) library.
 
-### **Future improvements**
-- Install plugins from CLI
-- 2nd function for keys (like double-tap), to save space for navigation
-- Regex filtering
-- Steam Generator:
-  - Refresh games without restarting deck

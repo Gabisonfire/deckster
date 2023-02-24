@@ -193,3 +193,34 @@ Interacts with the Homeassistant API
     "button_type": "push_toggle"
   },
 ```
+
+## lock
+Locks the deck until a passcode is entered.
+When pressed, the selected icon will be moved to the designated `key_on_lock` and all buttons will be deactivated until the keys provided by `combination` are pressed in the given order. Dont forget that the first key on the deck is key "0".
+
+Please note that the combination is easily readable, this is not meant to protect sensitive information/actions.
+
+- reference: `builtins.lock`
+- args:
+  - `combination`(int array): The keys to press and order to unlock the deck
+  - `key_on_lock`(int): On which key to display the icon when locked.
+
+```json
+  {
+    "page": 1,
+    "key": 0,
+    "plugin": "builtins.lock",
+    "args": {
+      "combination": [
+        0,
+        4,
+        10,
+        14
+      ],
+      "key_on_lock": 7
+    },
+    "icon_default": "lock.png",
+    "label": "@hide",
+    "button_type": "push"
+  },
+```

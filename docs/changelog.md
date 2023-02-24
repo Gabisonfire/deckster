@@ -3,6 +3,7 @@
   - Plugins requiring methods like `update_key_image` or `update_label_display` need to update their imports from `deckster.deckster` to `deckster.common.core`.
 - Updated pillow to 9.2.0 due to vulnerabilities.
 - Added the [Homeassistant plugin](https://deckster-sd.readthedocs.io/en/latest/plugins/)
+- Added the [lock plugin](https://deckster-sd.readthedocs.io/en/latest/plugins/)
 - Added [key templates](https://deckster-sd.readthedocs.io/en/latest/config/)
 
 # 0.5
