@@ -109,6 +109,11 @@ class Key:
         else:
             self.display_font = "Roboto-Regular.ttf"
 
+        if "track_state_locally" in json_key:
+            self.track_state_locally = json_key["track_state_locally"]
+        else:
+            self.track_state_locally = True
+
     def to_json(self):
         return json.dumps(self.__dict__)
     

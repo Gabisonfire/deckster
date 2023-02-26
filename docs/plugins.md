@@ -175,6 +175,11 @@ Interacts with the Homeassistant API
   - `entity_id`(string): The entity id
   - `token`(string): Your HA api token
 
+  **These require `track_state_locally` to be `false` in the key configuration:**
+  - `state_activated`(string): The HA state when the device is considered "on".
+  - `state_deactivated`(string): The HA state when the device is considered "off".
+  - `state_check_interval`(int): The interval in seconds for deckster to query the entitie's state.
+
 ```json
   {
     "key": 0,
@@ -185,12 +190,16 @@ Interacts with the Homeassistant API
       "domain": "switch",
       "action": "toggle",
       "entity_id": "my_ha_light",
-      "token": "asdkMTNkM2IwOTQ123MmE0NTI4321YmVkNTRjYzM1YzViasdYTJkZasd"
+      "token": "asdkMTNkM2IwOTQ123MmE0NTI4321YmVkNTRjYzM1YzViasdYTJkZasd",
+      "state_activated": "on",
+      "state_deactivated": "off",
+      "state_check_interval": 5
     },
     "icon_default": "light.png",
     "label": "Light",
     "label_color": "green",
-    "button_type": "push_toggle"
+    "button_type": "push_toggle",
+    "track_state_locally": false
   },
 ```
 

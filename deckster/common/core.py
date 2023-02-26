@@ -78,9 +78,9 @@ def handle_button_icon(key, pressed):
         key.toggle()
         update_key_state(key)
         if not key.toggle_state:
-            return key.icon_pressed
-        else:
             return key.icon_default
+        else:
+            return key.icon_pressed
     
     # If button is toggle, not pressed and in "on" state, keep pressed
     elif (key.button_type == "toggle" or key.button_type == "timer_toggle") and not pressed and key.toggle_state:
