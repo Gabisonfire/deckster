@@ -5,7 +5,7 @@ from deckster.common.core import deck_vault, reload
 from deckster.common.scheduler import clear_jobs
 from gevent.pywsgi import WSGIServer
 from flask import Flask, jsonify, request, make_response
-from plugins.builtins.lock import lock, unlock, blank_lock
+from deckster.plugins.builtins.lock import lock, unlock, blank_lock
 
 app = Flask("Deckster API")
 
