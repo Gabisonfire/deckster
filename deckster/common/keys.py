@@ -56,7 +56,7 @@ class Key:
         if "font" in json_key:
             self.font = json_key["font"]
         else:
-            self.font = "Roboto-Regular.ttf"
+            self.font = "Vera.ttf"
 
         if "icon_pressed" in json_key:
             self.icon_pressed = json_key["icon_pressed"]
@@ -107,7 +107,7 @@ class Key:
         if "display_font" in json_key:
             self.display_font = json_key["display_font"]
         else:
-            self.display_font = "Roboto-Regular.ttf"
+            self.display_font = "Vera.ttf"
 
         if "track_state_locally" in json_key:
             self.track_state_locally = json_key["track_state_locally"]
@@ -144,3 +144,14 @@ class Key:
     def toggle(self):
         self.toggle_state = not self.toggle_state
         return self.toggle_state
+    
+def fake_key(key_num, icon):
+    return Key(
+            {
+                'key': key_num,
+                'page': 1,
+                'icon_default': icon,
+                'plugin': 'empty',
+                'button_type': 'push'
+            }
+        )

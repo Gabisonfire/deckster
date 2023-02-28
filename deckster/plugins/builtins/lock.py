@@ -1,6 +1,7 @@
 import logging
-from deckster.common.core import clear, key_change_callback, draw_deck
+from deckster.common.core import clear, key_change_callback, draw_deck, update_key_image
 from deckster.common.configs import counter
+from deckster.common.keys import fake_key
 
 logger = logging.getLogger("deckster")
 
@@ -9,6 +10,26 @@ combination = []
 def unlock(deck):
     draw_deck(deck, init_draw=True, enable_scheduler=False)
     deck.set_key_callback(key_change_callback)
+
+# Used by the api
+def lock(deck, user_combination, key_on_lock, icon):
+    global combination
+    counter.count = 0
+    combination = user_combination
+    deck.set_key_callback(locked)
+    clear(deck)
+    k = fake_key(key_on_lock, icon)
+    k.label = "@hide"
+    print(k.to_json())
+    update_key_image(deck, k, False)
+    return
+
+def blank_lock(deck):
+    clear(deck)
+    deck.set_key_callback(nothing)
+
+def nothing(_a, _b, _c):
+    return
 
 def locked(deck, key_num, pressed):
     if not pressed: return
