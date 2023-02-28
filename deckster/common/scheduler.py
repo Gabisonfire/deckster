@@ -17,6 +17,9 @@ def add_job(job, interval, id, paused = False):
 def stop_jobs():
     sched.shutdown()
 
+def clear_jobs():
+    sched.remove_all_jobs()
+
 def toggle_job(id, state):
     logger.info(f"Setting job {id} to '{'resumed' if state else 'paused'}'")
     if state:

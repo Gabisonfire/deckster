@@ -11,6 +11,9 @@ PLUGINS_DIR = os.path.expanduser(cfg.read_config("plugins_dir"))
 PAGE = cfg.read_config("current_page")
 __version__ = cfg.__version__
 
+class deck_vault:
+    deck = None
+
 logger = logging.getLogger("deckster")
 def render_key_image(deck, icon_filename, key):
     logger.debug(f"Rendering image for key:{key.key} with {icon_filename}")
@@ -130,6 +133,7 @@ def handle_button_action(deck, key, pressed):
         return plugin.main(deck, key, pressed)
 
 def draw_deck(deck, increment = 0, init_draw = False, enable_scheduler = True):
+    deck_vault.deck = deck
     logger.debug(f"Drawing deck. {'INIT' if init_draw else ''}")
     clear(deck)
     if not init_draw:
@@ -163,3 +167,12 @@ def update_label_display(key, label=False):
 
 def update_key_state(key):
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)
+
+def load_modules():
+    modules = cfg.read_config("modules")
+    if modules == None: return
+    for module in modules:
+        importlib.import_module(f"deckster.modules.{module}")
+
+def reload(deck):
+    draw_deck(deck, init_draw=True)

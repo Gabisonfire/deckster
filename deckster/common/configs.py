@@ -36,6 +36,7 @@ def read_config(cfg):
         for k in cfg_file:
             if k == cfg:
                 return cfg_file[k]
+        return None
 
 def write_config(cfg, value):
     full_cfg = os.path.join(dir_path, "config.json")
