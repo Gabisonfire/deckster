@@ -56,7 +56,8 @@ def main():
     draw_deck(deck, init_draw=True)
     deck.set_key_callback(key_change_callback)
     load_modules()
-    logger.info(f"Ready.")
+    logger.info(f"boop.")
+    logger.info("Ready.")
     for t in threading.enumerate():
         if t is threading.current_thread():
             continue

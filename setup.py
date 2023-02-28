@@ -31,9 +31,18 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     python_requires=">=3.9",
     include_package_data=True,
-    packages=["deckster", "deckster.generators", "deckster.generators.builtins", "deckster.common", "deckster.plugins.builtins", "deckster.plugins.builtins.page", "deckster.plugins.builtins.web"],
+    packages=[
+        "deckster", 
+        "deckster.generators", 
+        "deckster.generators.builtins", 
+        "deckster.common", 
+        "deckster.plugins.builtins", 
+        "deckster.plugins.builtins.page", 
+        "deckster.plugins.builtins.web",
+        "deckster.modules"
+        ],
     entry_points = {
-        "console_scripts": ['deckster = deckster.deckster:main']
+        "console_scripts": ['deckster = deckster.main:main']
         },
     url="https://github.com/Gabisonfire/Deckster",
     classifiers=[
@@ -42,7 +51,7 @@ setuptools.setup(
         "Operating System :: POSIX :: Linux",
         "Topic :: System :: Hardware",
     ],
-    install_requires=["playsound==1.3.0", "Pillow==9.2.0", "requests==2.23.0", "streamdeck==0.8.5", "apscheduler==3.8.1", "pyaml==21.8.3", "jsonmerge==1.9.0", "flask==2.2.3", "gevent=22.10.2"],
+    install_requires=["playsound==1.3.0", "Pillow==9.2.0", "requests==2.23.0", "streamdeck==0.8.5", "apscheduler==3.8.1", "pyaml==21.8.3", "jsonmerge==1.9.0", "flask==2.2.3", "gevent==22.10.2"],
     cmdclass={
         'install': PostInstallCommand
     },

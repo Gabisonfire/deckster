@@ -125,7 +125,7 @@ def handle_button_action(deck, key, pressed):
             if os.path.isfile(path):
                 spec = importlib.util.spec_from_file_location(key.plugin.split(".")[-1], path)
                 plugin = importlib.util.module_from_spec(spec)
-                logger.debug(f"Importing custom '{plugin}' from '{path}'")
+                logger.debug(f"Importing custom '{plugin}'")
                 spec.loader.exec_module(plugin)
             else:
                 logger.error(f"File '{path}' does not exist.")
@@ -169,9 +169,11 @@ def update_key_state(key):
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)
 
 def load_modules():
+    logger.info("Loading modules...")
     modules = cfg.read_config("modules")
     if modules == None: return
     for module in modules:
+        logger.debug(f"Importing module: {module}")
         importlib.import_module(f"deckster.modules.{module}")
 
 def reload(deck):

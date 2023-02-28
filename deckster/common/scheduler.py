@@ -15,6 +15,7 @@ def add_job(job, interval, id, paused = False):
         sched.add_job(job, 'interval', seconds=interval, id=id)
 
 def stop_jobs():
+    sched.remove_all_jobs()
     sched.shutdown()
 
 def clear_jobs():
