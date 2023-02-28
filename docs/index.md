@@ -31,6 +31,7 @@ A service to manage your Streamdeck easily on Linux
 - [Configuration](config.md)
 - [Builtin Plugins](plugins.md)
 - [Custom Plugins](custom_plugins.md)
+- [Modules](modules.md)
 - [Builtin Generators](generators.md)
 - [Custom Generators](custom_generators.md)
 - [Changelog](changelog.md)

@@ -28,6 +28,7 @@ Keys are configured by referencing their numbers starting from 0, left to right.
 | padding | The padding applied to the icon. Left, right, bottom, top | | [int,int,int,int] | [0,0,0,0] |
 | toggle_state | The state stored for `toggle` type buttons. | | true, false | Written by Deckster |
 | track_state_locally | Whether to track or not the status of `toggle` type buttons locally. Some plugin might require this to be false (such as Homeassistant).  | | true, false | true |
+| modules | A list of modules to load. | | ["module_name"] | Refer to [modules](https://deckster-sd.readthedocs.io/en/latest/modules/) |
 
 ---
 

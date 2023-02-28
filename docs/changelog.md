@@ -6,6 +6,7 @@
 - Added the [lock plugin](https://deckster-sd.readthedocs.io/en/latest/plugins/)
 - Added [key templates](https://deckster-sd.readthedocs.io/en/latest/config/)
 - Added ability for plugins to manage the state of a toggle type button. See [Homeassistant plugin](https://deckster-sd.readthedocs.io/en/latest/plugins/) for examples.
+- Added [modules](https://deckster-sd.readthedocs.io/en/latest/modules/) functionality
 
 # 0.5
 - Fix for bad json formatting  (https://github.com/Gabisonfire/deckster/issues/4)
