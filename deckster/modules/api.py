@@ -53,7 +53,7 @@ def lock_deck():
         data = request.get_json()
         logger.debug("Request parsed")
         if "mode" in data:
-            if data["mode"] == "plugin":
+            if data["mode"] == "keyed":
                 combination = data["combination"]
                 key_on_lock = data["icon_key"]
                 icon = data["icon"]
