@@ -27,7 +27,6 @@ Keys are configured by referencing their numbers starting from 0, left to right.
 | display_font |  The font to use for displays | | An installed font | Roboto-Regular.ttf |
 | padding | The padding applied to the icon. Left, right, bottom, top | | [int,int,int,int] | [0,0,0,0] |
 | toggle_state | The state stored for `toggle` type buttons. | | true, false | Written by Deckster |
-| track_state_locally | Whether to track or not the status of `toggle` type buttons locally. Some plugin might require this to be false (such as Homeassistant).  | | true, false | true |
 | modules | A list of modules to load. | | ["module_name"] | Refer to [modules](https://deckster-sd.readthedocs.io/en/latest/modules/) |
 
 ---
@@ -43,7 +42,7 @@ Keys are configured by referencing their numbers starting from 0, left to right.
   - `timer_toggle`: Will start the timer when pressed, stop when pressed again.
 - `label`
   - `@hide`: Will hide the label.
-- `toggle_state`: This is used ny Deckster to keep the state of `toggle` type buttons. It is kept inside the configuration to allow users to manually change it if needed.
+- `toggle_state`: This is used by Deckster to keep the state of `toggle` type buttons. It is kept inside the configuration to allow users to manually change it if needed.
 - `padding`: When a label is shown, the bottom padding is automatically set to 20.
 - `template`: A file name within the `keys_dir` with a `.tmpl` extension, containing a json object with attributes to apply to all keys referring to the template. This can considerably reduce the keys definitions. Each key will have the template's content merged.
 

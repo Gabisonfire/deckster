@@ -5,7 +5,6 @@ import logging
 import os
 from deckster.common import scheduler
 
-
 logger = logging.getLogger("deckster")
 
 
@@ -38,6 +37,9 @@ class Key:
                 self.interval = json_key["interval"]
 
         # Optional
+        if self.button_type in ["toggle", "timer_toggle"]:
+            self.toggle_state = json_key["toggle_state"]
+
         if "label_truncate" in json_key:
             self.label_truncate = json_key["label_truncate"]
         else:
@@ -68,11 +70,6 @@ class Key:
 
         if "args" in json_key:
             self.args = json_key["args"]
-
-        if "toggle_state" in json_key:
-            self.toggle_state = json_key["toggle_state"]
-        else:
-            self.toggle_state = False
 
         if "label_color" in json_key:
             self.label_color = json_key["label_color"]
@@ -109,11 +106,6 @@ class Key:
         else:
             self.display_font = "Vera.ttf"
 
-        if "track_state_locally" in json_key:
-            self.track_state_locally = json_key["track_state_locally"]
-        else:
-            self.track_state_locally = True
-
     def to_json(self):
         return json.dumps(self.__dict__)
     
@@ -145,11 +137,11 @@ class Key:
         self.toggle_state = not self.toggle_state
         return self.toggle_state
     
-def fake_key(key_num, icon):
+def fake_key(key_num, icon, page = 1):
     return Key(
             {
                 'key': key_num,
-                'page': 1,
+                'page': page,
                 'icon_default': icon,
                 'plugin': 'empty',
                 'button_type': 'push'

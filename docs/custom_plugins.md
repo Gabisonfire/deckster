@@ -88,3 +88,7 @@ touch ~/deckster/deckster-plugins/gabisonfire/words/random.py
 ```json
     "plugin": "gabisonfire.words.random",
 ```
+
+
+## Runonce
+## Other useful functions

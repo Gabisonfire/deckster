@@ -7,12 +7,12 @@ sched = BackgroundScheduler(timezone="America/New_York")
 logger.debug("Sarting scheduler")
 sched.start()
 
-def add_job(job, interval, id, paused = False):
+def add_job(job, interval, id, paused = False, args = []):
     logger.info(f"Adding job {id} as '{'paused' if paused else 'started'}'")
     if paused:
-        sched.add_job(job, 'interval', seconds=interval, next_run_time=None, id=id)
+        sched.add_job(job, 'interval', seconds=interval, next_run_time=None, id=id, args=args)
     else:
-        sched.add_job(job, 'interval', seconds=interval, id=id)
+        sched.add_job(job, 'interval', seconds=interval, id=id, args=args)
 
 def stop_jobs():
     sched.remove_all_jobs()

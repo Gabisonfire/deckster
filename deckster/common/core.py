@@ -178,3 +178,39 @@ def load_modules():
 
 def reload(deck):
     draw_deck(deck, init_draw=True)
+
+def run_once(deck):
+    logger.info("Running plugins 'run_once'...")
+    plugins = []
+    builtins = []
+    for key in cfg.read_keys():
+        if key.plugin.startswith("builtins."):
+            builtins.append(key)
+        else:
+            path = os.path.join(PLUGINS_DIR, key.plugin.replace(".", "/") + ".py")
+            if os.path.isfile(path):
+                plugins.append(key)
+    for b in builtins:
+        logger.debug(f"Executing run_once for key: {b.key}, plugin: {b.plugin}")
+        plugin = importlib.import_module(f"deckster.plugins.{b.plugin}", None)
+        try:
+            ro = getattr(plugin, "run_once")
+            ro(deck, b)
+        except AttributeError as e:
+            logger.debug(f"Key {b.key}: {e}")
+            continue
+        except Exception as e:
+            logger.error(e)
+    for p in plugins:
+        logger.debug(f"Executing run_once for key: {p.key}, plugin: {p.plugin}")
+        true_path = os.path.join(PLUGINS_DIR, p.plugin.replace(".", "/") + ".py")
+        spec = importlib.util.spec_from_file_location(p.plugin.split(".")[-1], true_path)
+        m = importlib.util.module_from_spec(spec)
+        try:
+            ro = getattr(m, "run_once")
+            ro(deck, p)
+        except AttributeError as e:
+            logger.debug(f"Key {p.key}: {e}")
+            continue
+        except Exception as e:
+            logger.error(e)

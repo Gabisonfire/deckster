@@ -4,7 +4,7 @@ from sqlalchemy import false
 import yaml
 import logging
 import sys
-from deckster.common.keys import Key
+from deckster.common.keys import Key, fake_key
 from pathlib import Path
 from filelock import FileLock
 from jsonmerge import merge
@@ -22,8 +22,11 @@ logger.debug(f"Config path set to: {dir_path}")
 class counter:
     count = 0
 
-def read_config(cfg):
-    full_cfg = os.path.join(dir_path, "config.json")
+def read_config(cfg, custom_config = None):
+    if custom_config == None:
+        full_cfg = os.path.join(dir_path, "config.json")
+    else:
+        full_cfg = os.path.join(dir_path, custom_config)
     lock_path = f"{full_cfg}.lock"
     cfg_file = None
     with FileLock(lock_path):
@@ -38,8 +41,11 @@ def read_config(cfg):
                 return cfg_file[k]
         return None
 
-def write_config(cfg, value):
-    full_cfg = os.path.join(dir_path, "config.json")
+def write_config(cfg, value, custom_config = None):
+    if custom_config == None:
+        full_cfg = os.path.join(dir_path, "config.json")
+    else:
+        full_cfg = os.path.join(dir_path, custom_config)
     lock_path = f"{full_cfg}.lock"
     with FileLock(lock_path):
         with open(full_cfg, "r") as cfgFile:
@@ -88,7 +94,6 @@ def read_keys():
     for x in json_keys:
         if "template" in x:
             x = fetch_templated_key(x)
-            print(x)
         templist.append(Key(x))
     return templist
 
@@ -151,12 +156,5 @@ def write_key_config(key, page, cfg, value):
 def empty_set(key_count, page):
     ks = []
     for k in range(key_count):
-        x = {
-            "key": k,
-            "page": page,
-            "plugin": "empty",
-            "icon_default": "empty",
-            "button_type": "toggle"
-        }
-        ks.append(Key(x))
+        ks.append(fake_key(k, "empty", page))
     return ks
