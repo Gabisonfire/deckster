@@ -5,7 +5,6 @@ import logging
 import os
 from deckster.common import scheduler
 
-
 logger = logging.getLogger("deckster")
 
 
@@ -18,6 +17,15 @@ valid_buttons = [
 
 class Key:
     def __init__(self, json_key):
+        """Class that holds key information
+
+        Args:
+            json_key (string): Key in json format
+
+        Raises:
+            Exception: Invalid button type provided
+            Exception: No interval provided
+        """
         # Required
         self.key = json_key["key"]
         if not json_key["plugin"] == "empty":
@@ -38,6 +46,9 @@ class Key:
                 self.interval = json_key["interval"]
 
         # Optional
+        if self.button_type in ["toggle", "timer_toggle"]:
+            self.toggle_state = json_key["toggle_state"]
+
         if "label_truncate" in json_key:
             self.label_truncate = json_key["label_truncate"]
         else:
@@ -56,7 +67,7 @@ class Key:
         if "font" in json_key:
             self.font = json_key["font"]
         else:
-            self.font = "Roboto-Regular.ttf"
+            self.font = "Vera.ttf"
 
         if "icon_pressed" in json_key:
             self.icon_pressed = json_key["icon_pressed"]
@@ -68,11 +79,6 @@ class Key:
 
         if "args" in json_key:
             self.args = json_key["args"]
-
-        if "toggle_state" in json_key:
-            self.toggle_state = json_key["toggle_state"]
-        else:
-            self.toggle_state = False
 
         if "label_color" in json_key:
             self.label_color = json_key["label_color"]
@@ -107,12 +113,26 @@ class Key:
         if "display_font" in json_key:
             self.display_font = json_key["display_font"]
         else:
-            self.display_font = "Roboto-Regular.ttf"
+            self.display_font = "Vera.ttf"
 
     def to_json(self):
+        """Key in json format
+
+        Returns:
+            string: Json output for a key
+        """
         return json.dumps(self.__dict__)
     
     def schedule_timer(self, deck, plugin_dir):
+        """Schedules a timer for a toggle type button
+
+        Args:
+            deck (deck): The deck
+            plugin_dir (string): The directory to look for plugiin
+
+        Raises:
+            FileNotFoundError: Plugin not found
+        """
         if not self.button_type.startswith("timer"):
             return
         logger.debug(f"Scheduling timer on key: {self.key}.")
@@ -137,5 +157,31 @@ class Key:
         logger.info(f"Scheduling job({self.key}{self.page}), is paused: {paused}")
 
     def toggle(self):
+        """Toggles the state of a button
+
+        Returns:
+            bool: The new state of the key
+        """
         self.toggle_state = not self.toggle_state
         return self.toggle_state
+    
+def fake_key(key_num, icon, page = 1):
+    """Generates a fake key
+
+    Args:
+        key_num (integer): The index of the key
+        icon (string): The icon to show
+        page (int, optional): The page to assign the key. Defaults to 1.
+
+    Returns:
+        Key: A Key object
+    """
+    return Key(
+            {
+                'key': key_num,
+                'page': page,
+                'icon_default': icon,
+                'plugin': 'empty',
+                'button_type': 'push'
+            }
+        )

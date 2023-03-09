@@ -1,37 +1,37 @@
 import os
-import sys
-import threading
 import logging
 import importlib
-import importlib.util
-import signal
-import time
 import deckster.common.configs as cfg
-from deckster.generators import generators
-from deckster.common.scheduler import toggle_job, stop_jobs
 from PIL import Image, ImageDraw, ImageFont
-from StreamDeck.DeviceManager import DeviceManager
+from deckster.common.scheduler import toggle_job
 from StreamDeck.ImageHelpers import PILHelper
 
 ICONS_DIR = cfg.read_config("icons_dir")
-PLUGINS_DIR = cfg.read_config("plugins_dir")
-PLUGINS_DIR = os.path.expanduser(PLUGINS_DIR)
+PLUGINS_DIR = os.path.expanduser(cfg.read_config("plugins_dir"))
 PAGE = cfg.read_config("current_page")
 __version__ = cfg.__version__
 
+class deck_vault:
+    """Holds the current Deck object statically.
+    """
+    deck = None
 
 logger = logging.getLogger("deckster")
-logger.setLevel(logging.DEBUG)
-console = logging.StreamHandler(sys.stdout)
-console.setLevel(cfg.read_config("loglevel").upper())
-formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(filename)s - %(message)s', datefmt='%y-%m-%d,%H:%M:%S')
-console.setFormatter(formatter)
-logger.addHandler(console)
-logger.debug(f"Icons path: {ICONS_DIR}")
-logger.debug(f"Plugins path: {PLUGINS_DIR}")
-logger.debug(f"Current page: {PAGE}")
 
 def render_key_image(deck, icon_filename, key):
+    """Renders the given image on a key
+
+    Args:
+        deck (deck): The deck
+        icon_filename (string): Filename for the icon
+        key (Key): The key to render the image on
+
+    Raises:
+        FileNotFoundError: Icon file path is invalid
+
+    Returns:
+        StreamDeck Image: An image renderable by the StreamDeck
+    """
     logger.debug(f"Rendering image for key:{key.key} with {icon_filename}")
     bottom_margin = 0 if key.label == "@hide" else 20
     if not icon_filename == "@hide" and not icon_filename == "@display":
@@ -78,6 +78,14 @@ def render_key_image(deck, icon_filename, key):
     return PILHelper.to_native_format(deck, final_image)
 
 def update_key_image(deck, key, pressed, blank = False):
+    """Update the image on a key
+
+    Args:
+        deck (deck): The deck
+        key (Key): Key to update
+        pressed (bool): True if the key was pressed
+        blank (bool, optional): Creates a blank image. Defaults to False.
+    """
     if not key.plugin == "empty":
         logger.debug(f"Updating image for key:{key.key}")
     icon = handle_button_icon(key, pressed)
@@ -90,6 +98,15 @@ def update_key_image(deck, key, pressed, blank = False):
             deck.set_key_image(key.key, image)
 
 def handle_button_icon(key, pressed):
+    """Decides which image to display depending on the state and type of the button
+
+    Args:
+        key (Key): The key activated
+        pressed (bool): The status of the button
+
+    Returns:
+        string: An icon name
+    """
     if not key.plugin == "empty":
         logger.debug(f"Handling icon state for key:{key.key} -> '{'pressed' if pressed else 'released'}'")
     # If button is a toggle and is pressed, store new state.
@@ -97,9 +114,9 @@ def handle_button_icon(key, pressed):
         key.toggle()
         update_key_state(key)
         if not key.toggle_state:
-            return key.icon_pressed
-        else:
             return key.icon_default
+        else:
+            return key.icon_pressed
     
     # If button is toggle, not pressed and in "on" state, keep pressed
     elif (key.button_type == "toggle" or key.button_type == "timer_toggle") and not pressed and key.toggle_state:
@@ -110,6 +127,13 @@ def handle_button_icon(key, pressed):
         return key.icon_pressed if pressed else key.icon_default
 
 def key_change_callback(deck, key_num, pressed):
+    """Function called when a button is pressed
+
+    Args:
+        deck (deck): The deck
+        key_num (integer): Index of the key activated
+        pressed (bool): True for pressed, false for released
+    """
     if pressed:
         logger.info(f"Callback triggered for key:{key_num} -> 'pressed'")
     else:
@@ -132,6 +156,19 @@ def key_change_callback(deck, key_num, pressed):
     
 
 def handle_button_action(deck, key, pressed):
+    """Handles the action triggered by the key callback
+
+    Args:
+        deck (deck): The deck
+        key (Key): The triggered key
+        pressed (bool): The state of the button
+
+    Raises:
+        FileNotFoundError: Raised when a plugin is not found
+
+    Returns:
+        func: The main function of the plugin
+    """
     if pressed:
         if key.plugin.startswith("builtins."):
             logger.debug(f"Importing builtin plugin 'plugins.{key.plugin}'")
@@ -141,30 +178,50 @@ def handle_button_action(deck, key, pressed):
             if os.path.isfile(path):
                 spec = importlib.util.spec_from_file_location(key.plugin.split(".")[-1], path)
                 plugin = importlib.util.module_from_spec(spec)
-                logger.debug(f"Importing custom '{plugin}' from '{path}'")
+                logger.debug(f"Importing custom '{plugin}'")
                 spec.loader.exec_module(plugin)
             else:
                 logger.error(f"File '{path}' does not exist.")
                 raise FileNotFoundError(f"File '{path}' does not exist.")
         return plugin.main(deck, key, pressed)
 
-def draw_deck(deck, increment = 0, init_draw = False):
+def draw_deck(deck, increment = 0, init_draw = False, enable_scheduler = True):
+    """Draws the deck
+
+    Args:
+        deck (deck): The deck
+        increment (int, optional): How many pages to increment. Defaults to 0.
+        init_draw (bool, optional): True if it's the first time the deck is drawn. Defaults to False.
+        enable_scheduler (bool, optional): Enable the scheduler or not. Defaults to True.
+    """
+    deck_vault.deck = deck
     logger.debug(f"Drawing deck. {'INIT' if init_draw else ''}")
     clear(deck)
     if not init_draw:
         change_page(increment)
     for k in cfg.read_keys():
-        if k.button_type.startswith("timer") and init_draw:
+        if k.button_type.startswith("timer") and init_draw and enable_scheduler:
             k.schedule_timer(deck, cfg.read_config("plugins_dir"))
         update_key_image(deck, k, False)
          
 def clear(deck, page = 1):
+    """Clears the deck, filling it with empty keys.
+
+    Args:
+        deck (deck): The deck
+        page (int, optional): Page to clear. Defaults to 1.
+    """
     logger.debug(f"Clearing deck.")
     keys = cfg.empty_set(deck.key_count(), page)
     for k in keys:
         update_key_image(deck, k, False, True)
 
 def change_page(increment):
+    """Changes page.
+
+    Args:
+        increment (integer): For how many pages to move
+    """
     max = cfg.max_page(cfg.read_keys())
     global PAGE
     if PAGE + increment > max:
@@ -177,46 +234,76 @@ def change_page(increment):
     cfg.write_config("current_page", PAGE)
 
 def update_label_display(key, label=False):
+    """Writes the current text for a label or a display.
+
+    Args:
+        key (Key): Key to update
+        label (bool, optional): Should be set to true if writing a display, false for a label. Defaults to False.
+    """
     logger.debug(f"Writing {'label' if label  else 'display'} for key {key.key} -> {key.label if label else key.display}")
     cfg.write_key_config(key.key , key.page, 'label' if label else 'display', key.label if label else key.display)
 
 def update_key_state(key):
+    """Writes the current toggle state of a key.
+
+    Args:
+        key (Key): Key to save
+    """
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)
 
-def main():
-    logger.info(f"Deckster v{__version__}")
-    logger.info(f"Initializing...")
-    streamdecks = DeviceManager().enumerate()
-    while len(streamdecks) == 0:        
-        logger.info("No Stream Deck found, retrying in 10 seconds.")
-        time.sleep(10)
-        streamdecks = DeviceManager().enumerate()
-    deck = streamdecks[0]
+def _load_modules():
+    logger.info("Loading modules...")
+    modules = cfg.read_config("modules")
+    if modules == None: return
+    for module in modules:
+        logger.debug(f"Importing module: {module}")
+        importlib.import_module(f"deckster.modules.{module}")
 
-    def graceful_shutdown(sig, frame):
-        stop_jobs()
-        logger.info("Bye")
-        with deck:
-            deck.reset()
-            deck.close()
-        sys.exit(0)
+def reload(deck):
+    """Reload the deck
 
-    cfg.write_config("max_keys", deck.key_count())        
-    generators.execute_generators()
-    #for index, deck in enumerate(streamdecks):
-    deck.open()
-    deck.reset()
-    signal.signal(signal.SIGTERM, graceful_shutdown)
-    logger.debug(f"Opened '{deck.deck_type()}' device (serial number: '{deck.get_serial_number()}')")
-    deck.set_brightness(cfg.read_config("brightness"))
+    Args:
+        deck (deck): The deck
+    """
     draw_deck(deck, init_draw=True)
-    deck.set_key_callback(key_change_callback)
-    logger.info(f"Ready.")
-    for t in threading.enumerate():
-        if t is threading.currentThread():
-            continue
-        if t.is_alive():
-            t.join()
 
-if __name__ == "__main__":    
-    main()
+def _run_once(deck):
+    """Executes run_once on all plugins
+
+    Args:
+        deck (deck): The deck
+    """
+    logger.info("Running plugins 'run_once'...")
+    plugins = []
+    builtins = []
+    for key in cfg.read_keys():
+        if key.plugin.startswith("builtins."):
+            builtins.append(key)
+        else:
+            path = os.path.join(PLUGINS_DIR, key.plugin.replace(".", "/") + ".py")
+            if os.path.isfile(path):
+                plugins.append(key)
+    for b in builtins:
+        logger.debug(f"Executing run_once for key: {b.key}, plugin: {b.plugin}")
+        plugin = importlib.import_module(f"deckster.plugins.{b.plugin}", None)
+        try:
+            ro = getattr(plugin, "run_once")
+            ro(deck, b)
+        except AttributeError as e:
+            logger.debug(f"Key {b.key}: {e}")
+            continue
+        except Exception as e:
+            logger.error(e)
+    for p in plugins:
+        logger.debug(f"Executing run_once for key: {p.key}, plugin: {p.plugin}")
+        true_path = os.path.join(PLUGINS_DIR, p.plugin.replace(".", "/") + ".py")
+        spec = importlib.util.spec_from_file_location(p.plugin.split(".")[-1], true_path)
+        m = importlib.util.module_from_spec(spec)
+        try:
+            ro = getattr(m, "run_once")
+            ro(deck, p)
+        except AttributeError as e:
+            logger.debug(f"Key {p.key}: {e}")
+            continue
+        except Exception as e:
+            logger.error(e)

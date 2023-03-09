@@ -1,7 +1,7 @@
 import requests
 import logging
 import jq
-from deckster.deckster import update_key_image, update_label_display
+from deckster.common.core import update_key_image, update_label_display
 
 def main(deck, key, pressed):
     logger = logging.getLogger("deckster")

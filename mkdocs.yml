@@ -7,6 +7,8 @@ nav:
     - 'Builtin Plugins': 'plugins.md'
     - 'Custom Plugins': 'custom_plugins.md'
     - 'Builtin Generators': 'generators.md'
+    - 'Modules': 'modules.md'
+    - 'API Reference': 'api/common/index.md'
     - 'Changelog': 'changelog.md'
 markdown_extensions:
   - mdx_truly_sane_lists
