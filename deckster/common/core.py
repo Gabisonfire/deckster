@@ -12,10 +12,26 @@ PAGE = cfg.read_config("current_page")
 __version__ = cfg.__version__
 
 class deck_vault:
+    """Holds the current Deck object statically.
+    """
     deck = None
 
 logger = logging.getLogger("deckster")
+
 def render_key_image(deck, icon_filename, key):
+    """Renders the given image on a key
+
+    Args:
+        deck (deck): The deck
+        icon_filename (string): Filename for the icon
+        key (Key): The key to render the image on
+
+    Raises:
+        FileNotFoundError: Icon file path is invalid
+
+    Returns:
+        StreamDeck Image: An image renderable by the StreamDeck
+    """
     logger.debug(f"Rendering image for key:{key.key} with {icon_filename}")
     bottom_margin = 0 if key.label == "@hide" else 20
     if not icon_filename == "@hide" and not icon_filename == "@display":
@@ -62,6 +78,14 @@ def render_key_image(deck, icon_filename, key):
     return PILHelper.to_native_format(deck, final_image)
 
 def update_key_image(deck, key, pressed, blank = False):
+    """Update the image on a key
+
+    Args:
+        deck (deck): The deck
+        key (Key): Key to update
+        pressed (bool): True if the key was pressed
+        blank (bool, optional): Creates a blank image. Defaults to False.
+    """
     if not key.plugin == "empty":
         logger.debug(f"Updating image for key:{key.key}")
     icon = handle_button_icon(key, pressed)
@@ -74,6 +98,15 @@ def update_key_image(deck, key, pressed, blank = False):
             deck.set_key_image(key.key, image)
 
 def handle_button_icon(key, pressed):
+    """Decides which image to display depending on the state and type of the button
+
+    Args:
+        key (Key): The key activated
+        pressed (bool): The status of the button
+
+    Returns:
+        string: An icon name
+    """
     if not key.plugin == "empty":
         logger.debug(f"Handling icon state for key:{key.key} -> '{'pressed' if pressed else 'released'}'")
     # If button is a toggle and is pressed, store new state.
@@ -94,6 +127,13 @@ def handle_button_icon(key, pressed):
         return key.icon_pressed if pressed else key.icon_default
 
 def key_change_callback(deck, key_num, pressed):
+    """Function called when a button is pressed
+
+    Args:
+        deck (deck): The deck
+        key_num (integer): Index of the key activated
+        pressed (bool): True for pressed, false for released
+    """
     if pressed:
         logger.info(f"Callback triggered for key:{key_num} -> 'pressed'")
     else:
@@ -116,6 +156,19 @@ def key_change_callback(deck, key_num, pressed):
     
 
 def handle_button_action(deck, key, pressed):
+    """Handles the action triggered by the key callback
+
+    Args:
+        deck (deck): The deck
+        key (Key): The triggered key
+        pressed (bool): The state of the button
+
+    Raises:
+        FileNotFoundError: Raised when a plugin is not found
+
+    Returns:
+        func: The main function of the plugin
+    """
     if pressed:
         if key.plugin.startswith("builtins."):
             logger.debug(f"Importing builtin plugin 'plugins.{key.plugin}'")
@@ -133,6 +186,14 @@ def handle_button_action(deck, key, pressed):
         return plugin.main(deck, key, pressed)
 
 def draw_deck(deck, increment = 0, init_draw = False, enable_scheduler = True):
+    """Draws the deck
+
+    Args:
+        deck (deck): The deck
+        increment (int, optional): How many pages to increment. Defaults to 0.
+        init_draw (bool, optional): True if it's the first time the deck is drawn. Defaults to False.
+        enable_scheduler (bool, optional): Enable the scheduler or not. Defaults to True.
+    """
     deck_vault.deck = deck
     logger.debug(f"Drawing deck. {'INIT' if init_draw else ''}")
     clear(deck)
@@ -144,12 +205,23 @@ def draw_deck(deck, increment = 0, init_draw = False, enable_scheduler = True):
         update_key_image(deck, k, False)
          
 def clear(deck, page = 1):
+    """Clears the deck, filling it with empty keys.
+
+    Args:
+        deck (deck): The deck
+        page (int, optional): Page to clear. Defaults to 1.
+    """
     logger.debug(f"Clearing deck.")
     keys = cfg.empty_set(deck.key_count(), page)
     for k in keys:
         update_key_image(deck, k, False, True)
 
 def change_page(increment):
+    """Changes page.
+
+    Args:
+        increment (integer): For how many pages to move
+    """
     max = cfg.max_page(cfg.read_keys())
     global PAGE
     if PAGE + increment > max:
@@ -162,13 +234,24 @@ def change_page(increment):
     cfg.write_config("current_page", PAGE)
 
 def update_label_display(key, label=False):
+    """Writes the current text for a label or a display.
+
+    Args:
+        key (Key): Key to update
+        label (bool, optional): Should be set to true if writing a display, false for a label. Defaults to False.
+    """
     logger.debug(f"Writing {'label' if label  else 'display'} for key {key.key} -> {key.label if label else key.display}")
     cfg.write_key_config(key.key , key.page, 'label' if label else 'display', key.label if label else key.display)
 
 def update_key_state(key):
+    """Writes the current toggle state of a key.
+
+    Args:
+        key (Key): Key to save
+    """
     cfg.write_key_config(key.key , key.page, "toggle_state", key.toggle_state)
 
-def load_modules():
+def _load_modules():
     logger.info("Loading modules...")
     modules = cfg.read_config("modules")
     if modules == None: return
@@ -177,9 +260,19 @@ def load_modules():
         importlib.import_module(f"deckster.modules.{module}")
 
 def reload(deck):
+    """Reload the deck
+
+    Args:
+        deck (deck): The deck
+    """
     draw_deck(deck, init_draw=True)
 
-def run_once(deck):
+def _run_once(deck):
+    """Executes run_once on all plugins
+
+    Args:
+        deck (deck): The deck
+    """
     logger.info("Running plugins 'run_once'...")
     plugins = []
     builtins = []

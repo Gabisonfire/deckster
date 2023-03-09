@@ -17,6 +17,15 @@ valid_buttons = [
 
 class Key:
     def __init__(self, json_key):
+        """Class that holds key information
+
+        Args:
+            json_key (string): Key in json format
+
+        Raises:
+            Exception: Invalid button type provided
+            Exception: No interval provided
+        """
         # Required
         self.key = json_key["key"]
         if not json_key["plugin"] == "empty":
@@ -107,9 +116,23 @@ class Key:
             self.display_font = "Vera.ttf"
 
     def to_json(self):
+        """Key in json format
+
+        Returns:
+            string: Json output for a key
+        """
         return json.dumps(self.__dict__)
     
     def schedule_timer(self, deck, plugin_dir):
+        """Schedules a timer for a toggle type button
+
+        Args:
+            deck (deck): The deck
+            plugin_dir (string): The directory to look for plugiin
+
+        Raises:
+            FileNotFoundError: Plugin not found
+        """
         if not self.button_type.startswith("timer"):
             return
         logger.debug(f"Scheduling timer on key: {self.key}.")
@@ -134,10 +157,25 @@ class Key:
         logger.info(f"Scheduling job({self.key}{self.page}), is paused: {paused}")
 
     def toggle(self):
+        """Toggles the state of a button
+
+        Returns:
+            bool: The new state of the key
+        """
         self.toggle_state = not self.toggle_state
         return self.toggle_state
     
 def fake_key(key_num, icon, page = 1):
+    """Generates a fake key
+
+    Args:
+        key_num (integer): The index of the key
+        icon (string): The icon to show
+        page (int, optional): The page to assign the key. Defaults to 1.
+
+    Returns:
+        Key: A Key object
+    """
     return Key(
             {
                 'key': key_num,

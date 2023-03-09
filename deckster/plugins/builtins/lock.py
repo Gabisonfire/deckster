@@ -1,6 +1,6 @@
 import logging
 from deckster.common.core import clear, key_change_callback, draw_deck, update_key_image
-from deckster.common.configs import counter
+from deckster.common.configs import _counter
 from deckster.common.keys import fake_key
 
 logger = logging.getLogger("deckster")

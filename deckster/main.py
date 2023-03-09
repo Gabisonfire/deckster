@@ -5,7 +5,7 @@ import logging
 import signal
 import time
 import deckster.common.configs as cfg
-from deckster.common.core import draw_deck, key_change_callback, load_modules, run_once
+from deckster.common.core import draw_deck, key_change_callback, _load_modules, _run_once
 from deckster.generators import generators
 from deckster.common.scheduler import stop_jobs
 from StreamDeck.DeviceManager import DeviceManager
@@ -55,9 +55,9 @@ def main():
     deck.set_brightness(cfg.read_config("brightness"))
     draw_deck(deck, init_draw=True)
     deck.set_key_callback(key_change_callback)
-    run_once(deck)
+    _run_once(deck)
     logger.info("Ready.")
-    load_modules()
+    _load_modules()
     for t in threading.enumerate():
         if t is threading.current_thread():
             continue

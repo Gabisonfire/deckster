@@ -34,6 +34,7 @@ A service to manage your Streamdeck easily on Linux
 - [Modules](modules.md)
 - [Builtin Generators](generators.md)
 - [Custom Generators](custom_generators.md)
+- [API Reference](api/common/index.md)
 - [Changelog](changelog.md)
 
 Built with [Dean Camera](https://github.com/abcminiuser/)'s awesome [Streamdeck](https://pypi.org/project/streamdeck/) library.

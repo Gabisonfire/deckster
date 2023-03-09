@@ -17,6 +17,8 @@ Now let's create our plugin file:
 touch ~/deckster/deckster-plugins/gabisonfire/random.py
 ```
 
+Available imports can be viewed [in the API Reference section](api/common/index.md)
+
 ```python
 # This import is required to update the label/display of a key
 from deckster.common.core import update_key_image, update_label_display
@@ -89,6 +91,8 @@ touch ~/deckster/deckster-plugins/gabisonfire/words/random.py
     "plugin": "gabisonfire.words.random",
 ```
 
-
-## Runonce
-## Other useful functions
+## run_once
+`run_once` can be implemented if needed. It is called only once when the deck is initialized. It can be useful for launching background jobs.
+It accepts two arguments:
+- `deck`: The current [deck object](https://python-elgato-streamdeck.readthedocs.io/en/stable/modules/devices.html#module-StreamDeck.Devices.StreamDeck) 
+- `key`: The `key` that triggered the event. It holds all the information in your config.
