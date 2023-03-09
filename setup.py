@@ -51,7 +51,7 @@ setuptools.setup(
         "Operating System :: POSIX :: Linux",
         "Topic :: System :: Hardware",
     ],
-    install_requires=["playsound==1.3.0", "Pillow==9.2.0", "requests==2.23.0", "streamdeck==0.8.5", "apscheduler==3.8.1", "pyaml==21.8.3", "jsonmerge==1.9.0", "flask==2.2.3", "gevent==22.10.2"],
+    install_requires=["playsound==1.3.0", "Pillow==9.3.0", "requests==2.23.0", "streamdeck==0.8.5", "apscheduler==3.8.1", "pyaml==21.8.3", "jsonmerge==1.9.0", "flask==2.2.3", "gevent==22.10.2"],
     cmdclass={
         'install': PostInstallCommand
     },
