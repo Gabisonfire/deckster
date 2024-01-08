@@ -34,7 +34,7 @@ def main(deck, key, pressed):
 
     try:
         logger.debug(f"Trying POST request for {args.url} with parameters: {args.json_data} and headers: {args.headers}.")
-        res = requests.post(args.url, data = args.json_data, headers = args.headers)
+        res = requests.post(args.url, data = args.json_data, headers = args.headers, verify=False)
     except Exception as e:
         logger.error(f"Request to {args.url} failed: {e}")
 
@@ -44,7 +44,7 @@ def update_state(deck, key):
     try:
         args = get_args(key)
         logger.debug(f"Trying GET request for {args.state_url} with headers: {args.headers}.")
-        state = requests.get(args.state_url, headers = args.headers)
+        state = requests.get(args.state_url, headers = args.headers, verify=False)
         if state.json()["state"] == args.state_activated:
             logger.debug(f"Key returned a state of '{state.json()['state']}'")
             key.toggle_state = True

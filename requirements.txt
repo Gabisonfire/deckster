@@ -7,3 +7,5 @@ psutil==5.8.0
 jsonmerge==1.9.0
 flask==2.2.3
 gevent==22.10.2
+filelock==3.12.2
+sqlalchemy==2.0.17
